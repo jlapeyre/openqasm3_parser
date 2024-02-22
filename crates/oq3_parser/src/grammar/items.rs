@@ -78,6 +78,12 @@ pub(super) fn opt_item(p: &mut Parser<'_>, m: Marker) -> Result<(), Marker> {
     match p.current() {
         T![qubit] => qubit_declaration_stmt(p, m),
         T![const] => expressions::classical_declaration_stmt(p, m),
+        // We could handle assignment as a binary operator. This has advantages
+        // such as reducing complexity. But handling it specially allows
+        // restricting the left hand side at the level of syntax. However, we
+        // have to dispatch to parsing assignment in three separate places.
+        // There may be a way to get both. Probably through validation after the
+        // binary expression is parsed.
         IDENT if (la == T![=] && p.nth(2) != T![=]) => assignment_statement_with_marker(p, m),
         T![gate] => gate_definition(p, m),
         T![break] => break_(p, m),
@@ -183,6 +189,7 @@ fn for_stmt(p: &mut Parser<'_>, m: Marker) {
 // Called from atom::atom_expr
 // FIXME: return CompletedMarker because this is called from `atom_expr`
 // Where functions are called and what they return should be made more uniform.
+#[allow(dead_code)]
 pub(crate) fn assignment_statement(p: &mut Parser<'_>) -> CompletedMarker {
     let m = p.start();
     name(p);

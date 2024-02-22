@@ -3,9 +3,6 @@
 
 use super::*;
 
-use crate::grammar;
-use crate::grammar::expressions;
-
 pub(crate) const PATH_FIRST: TokenSet = TokenSet::new(&[IDENT, HARDWAREIDENT, T![:], T![<]]);
 
 pub(crate) const LITERAL_FIRST: TokenSet = TokenSet::new(&[
@@ -87,7 +84,13 @@ pub(super) fn atom_expr(
         T![inv] | T![pow] | T![ctrl] | T![negctrl] => modified_gate_call_expr(p),
         T![gphase] => gphase_call_expr(p),
         IDENT if (la == IDENT || la == HARDWAREIDENT) => gate_call_expr(p),
-        IDENT if (la == T![=] && p.nth(2) != T![=]) => grammar::items::assignment_statement(p),
+        // FIXME: Following code path is not tested
+        IDENT if (la == T![=] && p.nth(2) != T![=]) => {
+            // If the call to assignment_statement_with_marker(p, m) in items.rs is removed, then
+            // this path is taken. It also spuriously may ask for a semicolon.
+            // grammar::items::assignment_statement(p)
+            panic!("Replace this line with commented out code above and add a test for this code path.")
+        }
         // FIXME: An identifer bound by the user in the program.
         // Need to handle more than identifier.
         // Also `NAME` is probably not correct.
