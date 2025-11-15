@@ -9,8 +9,8 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-// I think SourceFile actually just works with the source as a string.
-// Knowledge of any file is not used by synast::SourceFile;
+// `SourceFile` is a misnomer. It actually just works with the source as a string.
+// `synast::SourceFile` has no knowledge of path names, filesystems, io streams, etc.
 pub(crate) type ParsedSource = ParseOrErrors<synast::SourceFile>;
 
 pub(crate) fn parse_source_and_includes<P: AsRef<Path>>(
@@ -26,6 +26,12 @@ pub(crate) fn parse_source_and_includes<P: AsRef<Path>>(
     (parsed_source, included)
 }
 
+/// The crate text-range defines `TextRange`.
+/// Errors are displayed with the crate `ariadne`, which uses `Range` (I think).
+/// We have to convert from the former to the latter.
+///
+/// The origin of `TextRange` is confusing (maybe to my lsp). I think it is imported like this:
+/// text-range -> rowan -> oq3_syntax -> here.
 pub(crate) fn range_to_span(range: &TextRange) -> std::ops::Range<usize> {
     let r1: usize = range.start().into();
     let r2: usize = range.end().into();
@@ -36,7 +42,10 @@ pub(crate) fn range_to_span(range: &TextRange) -> std::ops::Range<usize> {
 }
 
 pub trait ErrorTrait {
+    /// Return a message describing the error.
     fn message(&self) -> String;
+
+    /// Return the character range in the source associated with the error.
     fn range(&self) -> TextRange;
 }
 

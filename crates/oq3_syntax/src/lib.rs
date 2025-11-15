@@ -162,7 +162,18 @@ impl Parse<SourceFile> {
 //   by the parser, implies a bug outside the parser.
 //   A syntactically incorrect ast being ingested by the semantic analyzer implies a bug
 //   outside the semantic analyzer.
+
 /// Same as Parse<T> except that the `GreenNode` is wrapped in `Option`.
+/// Possible values of the fields of this struct are:
+/// Case 1:
+///  `green` is `None`
+///  `errors` is not empty.
+///   all errors in `errors` are lexer errors.
+/// Case 2:
+///   `green` is `Some`
+///   if `errors` is empty, then lexing and parsing succeeded without error.
+///   if `errors` is not empty, then all errors are parser errors. There are no lexer errors.
+///
 /// The `Option` is `None` if lexer errors were recorded, in which case no
 /// parsing was done. In the same case, all errors will be lexer errors.
 /// If there are no lexer errors, the parsing was done, and there is a `GreenNode`.
@@ -191,6 +202,7 @@ impl<T> ParseOrErrors<T> {
     pub fn errors(&self) -> &[SyntaxError] {
         &self.errors
     }
+    /// Return `true` if a generated parse structure is available.
     pub fn have_parse(&self) -> bool {
         self.green.is_some()
     }
