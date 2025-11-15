@@ -123,7 +123,15 @@ pub fn search_paths() -> Option<Vec<PathBuf>> {
     env::var_os("QASM3_PATH").map(|paths| env::split_paths(&paths).collect())
 }
 
-/// Expand path with search paths. Return input if expansion fails.
+/// Expand path with search paths. Return successfully expanded path.
+/// Return input if expansion fails.
+///
+/// 1) If `file_path` is absolute, return `file_path`.
+/// 2) Else, iterate through any (directory) paths in `search_path_list`,
+///  joining `file_path` to each directory path. Return the first full path that
+///  exists, if one exists, on the filesystem.
+/// 3) Else search in the same way the path list given in `QASM3_PATH`.
+/// 4) Else, finding an existing full file path failed. Return the input `file_path`.
 pub(crate) fn expand_path<T: AsRef<Path>, P: AsRef<Path>>(
     file_path: T,
     search_path_list: Option<&[P]>,
@@ -150,6 +158,8 @@ pub(crate) fn expand_path<T: AsRef<Path>, P: AsRef<Path>>(
             }
         }
     }
+    // `file_path` is not absolute, and it is not found on any of the search paths.
+    // Return the input `file_path`.
     file_path
 }
 

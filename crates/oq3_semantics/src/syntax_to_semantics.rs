@@ -102,7 +102,7 @@ where
     analyze_source(parsed_source)
 }
 
-/// Parse source file to semantic ASG
+/// Parse source file `file_path` and analyze results to semantic ASG
 pub fn parse_source_file<T, P>(
     file_path: T,
     search_path_list: Option<&[P]>,
