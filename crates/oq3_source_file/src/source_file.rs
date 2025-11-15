@@ -202,6 +202,7 @@ pub(crate) fn parse_included_files<P: AsRef<Path>>(
                     match maybe_source_string {
                         Ok(source_string) => Some(parse_source_file(file_path, search_path_list)),
                         Err(error) => {
+                            let errors = syntax_ast.errors();
                             None
                         },
                     }
