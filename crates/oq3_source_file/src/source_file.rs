@@ -177,6 +177,7 @@ pub(crate) fn read_source_file(file_path: &Path) -> String {
     }
 }
 
+
 // FIXME: prevent a file from including itself. Then there are two-file cycles, etc.
 ///  Recursively parse any files `include`d in the program `syntax_ast`.
 /// `syntax_ast` -- the already-parsed parent source file.
@@ -197,8 +198,15 @@ pub(crate) fn parse_included_files<P: AsRef<Path>>(
                     None
                 } else {
                     let full_path = resolve_file_path(&file_path, search_path_list);
-                    let source_string = read_source_file(&full_path).as_str();
-                    Some(parse_source_file(file_path, search_path_list))
+                    let maybe_source_string = fs::read_to_string(&full_path);
+                    match maybe_source_string {
+                        Ok(source_string) => Some(parse_source_file(file_path, search_path_list)),
+                        Err(error) => {
+                            None
+                        },
+                    }
+//                    let source_string = read_source_file(&full_path).as_str();
+//                    Some(parse_source_file(file_path, search_path_list))
                 }
             }
             _ => None,
