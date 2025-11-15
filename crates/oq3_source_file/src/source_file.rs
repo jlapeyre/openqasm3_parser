@@ -14,16 +14,16 @@ use std::path::{Path, PathBuf};
 pub(crate) type ParsedSource = ParseOrErrors<synast::SourceFile>;
 
 pub(crate) fn parse_source_and_includes<P: AsRef<Path>>(
-    source: &str,
+    source_string: &str,
     search_path_list: Option<&[P]>,
 ) -> (ParsedSource, Vec<SourceFile>) {
-    let parsed_source = synast::SourceFile::parse_check_lex(source);
-    let included = if parsed_source.have_parse() {
+    let parsed_source = synast::SourceFile::parse_check_lex(source_string);
+    let parsed_included_source = if parsed_source.have_parse() {
         parse_included_files(&parsed_source, search_path_list)
     } else {
         Vec::<SourceFile>::new()
     };
-    (parsed_source, included)
+    (parsed_source, parsed_included_source)
 }
 
 /// The crate text-range defines `TextRange`.
@@ -179,6 +179,8 @@ pub(crate) fn read_source_file(file_path: &Path) -> String {
 
 // FIXME: prevent a file from including itself. Then there are two-file cycles, etc.
 ///  Recursively parse any files `include`d in the program `syntax_ast`.
+/// `syntax_ast` -- the already-parsed parent source file.
+/// `search_path_list` -- a list of paths used for resolving filenams in `include` statements.
 pub(crate) fn parse_included_files<P: AsRef<Path>>(
     syntax_ast: &ParsedSource,
     search_path_list: Option<&[P]>,
@@ -194,6 +196,8 @@ pub(crate) fn parse_included_files<P: AsRef<Path>>(
                 if file_path == "stdgates.inc" {
                     None
                 } else {
+                    let full_path = resolve_file_path(&file_path, search_path_list);
+                    let source_string = read_source_file(&full_path).as_str();
                     Some(parse_source_file(file_path, search_path_list))
                 }
             }
