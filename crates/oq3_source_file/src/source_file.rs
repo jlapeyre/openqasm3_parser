@@ -119,12 +119,14 @@ impl SourceFile {
     }
 }
 
-pub fn search_paths() -> Option<Vec<PathBuf>> {
+/// Read the environment variable `QASM3_PATH` and return a list of directory paths to search
+/// qasm source files.
+pub fn get_file_search_paths_from_env() -> Option<Vec<PathBuf>> {
     env::var_os("QASM3_PATH").map(|paths| env::split_paths(&paths).collect())
 }
 
-/// Expand path with search paths. Return successfully expanded path.
-/// Return input if expansion fails.
+/// Try to find `file_path`, possibly by expanding with paths in `search_path_list`.
+/// Return successfully expanded path, or return input if expansion fails.
 ///
 /// 1) If `file_path` is absolute, return `file_path`.
 /// 2) Else, iterate through any (directory) paths in `search_path_list`,
@@ -132,7 +134,7 @@ pub fn search_paths() -> Option<Vec<PathBuf>> {
 ///  exists, if one exists, on the filesystem.
 /// 3) Else search in the same way the path list given in `QASM3_PATH`.
 /// 4) Else, finding an existing full file path failed. Return the input `file_path`.
-pub(crate) fn expand_path<T: AsRef<Path>, P: AsRef<Path>>(
+pub(crate) fn resolve_file_path<T: AsRef<Path>, P: AsRef<Path>>(
     file_path: T,
     search_path_list: Option<&[P]>,
 ) -> PathBuf {
@@ -151,7 +153,7 @@ pub(crate) fn expand_path<T: AsRef<Path>, P: AsRef<Path>>(
                 return full_path;
             }
         }
-    } else if let Some(paths) = search_paths() {
+    } else if let Some(paths) = get_file_search_paths_from_env() {
         for path in paths {
             if let Some(full_path) = try_path(path.as_ref()) {
                 return full_path;

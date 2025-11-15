@@ -12,7 +12,7 @@ use std::path::{Path, PathBuf};
 // Syntactic AST
 
 use crate::source_file::{
-    expand_path, parse_source_and_includes, range_to_span, read_source_file, ErrorTrait,
+    parse_source_and_includes, range_to_span, read_source_file, resolve_file_path, ErrorTrait,
     SourceFile, SourceString,
 };
 
@@ -23,7 +23,7 @@ where
     T: AsRef<Path>,
     P: AsRef<Path>,
 {
-    let full_path = expand_path(file_path, search_path_list);
+    let full_path = resolve_file_path(file_path, search_path_list);
     let (syntax_ast, included) =
         parse_source_and_includes(read_source_file(&full_path).as_str(), search_path_list);
     SourceFile::new(full_path, syntax_ast, included)
