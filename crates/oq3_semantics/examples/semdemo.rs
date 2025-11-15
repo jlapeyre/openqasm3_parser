@@ -104,7 +104,6 @@ fn main() {
                 result.program(),
                 result.symbol_table()
             ));
-            //            result.take_context().symbol_table().dump();
         }
 
         Some(Commands::SemanticPretty { file_name }) => {
