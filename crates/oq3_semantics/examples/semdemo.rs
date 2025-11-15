@@ -82,7 +82,7 @@ fn main() {
             let source = read_example_source(file_name);
             let file_name = Some("giraffe");
             let result =
-                syntax_to_semantics::parse_source_string(source, file_name, None::<&[PathBuf]>);
+                syntax_to_semantics::parse_source_string_with_path_search(source, file_name, None::<&[PathBuf]>);
             if result.any_errors() {
                 result.print_errors();
             }
@@ -91,7 +91,7 @@ fn main() {
 
         #[allow(clippy::dbg_macro)]
         Some(Commands::Semantic { file_name }) => {
-            let result = syntax_to_semantics::parse_source_file(file_name, None::<&[PathBuf]>);
+            let result = syntax_to_semantics::parse_source_file_with_search(file_name, None::<&[PathBuf]>);
             if result.any_errors() {
                 println!("Found errors:");
                 result.print_errors();
@@ -108,7 +108,7 @@ fn main() {
         }
 
         Some(Commands::SemanticPretty { file_name }) => {
-            let result = syntax_to_semantics::parse_source_file(file_name, None::<&[PathBuf]>);
+            let result = syntax_to_semantics::parse_source_file_with_search(file_name, None::<&[PathBuf]>);
             if result.any_errors() {
                 println!("Found errors:");
                 result.print_errors();

@@ -88,7 +88,7 @@ impl ParseResult<SourceString> {
 
 /// Parse string containing source to semantic ASG.
 /// Fake file name is used for printing diagnostics.
-pub fn parse_source_string<T, P>(
+pub fn parse_source_string_with_path_search<T, P>(
     source: T,
     fake_file_path: Option<&str>,
     search_path_list: Option<&[P]>,
@@ -102,8 +102,11 @@ where
     analyze_source(parsed_source)
 }
 
-/// Parse source file `file_path` and analyze results to semantic ASG
-pub fn parse_source_file<T, P>(
+/// Parse source file `file_path` and analyze results to semantic ASG.
+/// If not absolute, `file_path` will be resolved using `search_path_list`.
+/// We don't bother to resolve early because we will still need `search_path_list`
+/// till the end of sematic analysis: It is used to resolve included source files.
+pub fn parse_source_file_with_search<T, P>(
     file_path: T,
     search_path_list: Option<&[P]>,
 ) -> ParseResult<SourceFile>
