@@ -10,7 +10,7 @@
 
 use std;
 use std::mem::replace;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use crate::asg;
 use crate::types;
@@ -114,6 +114,32 @@ where
     T: AsRef<Path>,
     P: AsRef<Path>,
 {
+    let parsed_source: SourceFile = oq3_source_file::parse_source_file(file_path, search_path_list);
+    analyze_source(parsed_source)
+}
+
+/// Use an empty `search_path_list`.
+pub fn parse_source_string<T>(
+    source: T,
+    fake_file_path: Option<&str>,
+) -> ParseResult<SourceString>
+where
+    T: AsRef<str>,
+{
+    let search_path_list = None::<&[PathBuf]>;
+    let parsed_source: SourceString =
+        oq3_source_file::parse_source_string(source, fake_file_path, search_path_list);
+    analyze_source(parsed_source)
+}
+
+/// Use an empty `search_path_list`.
+pub fn parse_source_file<T>(
+    file_path: T,
+) -> ParseResult<SourceFile>
+where
+    T: AsRef<Path>,
+{
+    let search_path_list = None::<&[PathBuf]>;
     let parsed_source: SourceFile = oq3_source_file::parse_source_file(file_path, search_path_list);
     analyze_source(parsed_source)
 }
