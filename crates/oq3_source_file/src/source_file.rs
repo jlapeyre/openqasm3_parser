@@ -1,7 +1,8 @@
 // Copyright contributors to the openqasm-parser project
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::api::{inner_print_compiler_errors, parse_source_file, print_compiler_errors};
+use crate::api::{inner_print_compiler_errors, print_compiler_errors};
+use crate::parse_source_file_with_search;
 use oq3_syntax::ast as synast; // Syntactic AST
 use oq3_syntax::ParseOrErrors;
 use oq3_syntax::TextRange;
@@ -182,7 +183,6 @@ pub(crate) fn read_source_file(file_path: &Path) -> String {
     }
 }
 
-use oq3_syntax::AstNode;
 // FIXME: prevent a file from including itself. Then there are two-file cycles, etc.
 ///  Recursively parse any files `include`d in the program `syntax_ast`.
 /// `syntax_ast` -- the already-parsed parent source file.
@@ -202,7 +202,7 @@ pub(crate) fn parse_included_files<P: AsRef<Path>>(
                 if file_path == "stdgates.inc" {
                     None
                 } else {
-                    Some(parse_source_file(file_path, search_path_list))
+                    Some(parse_source_file_with_search(file_path, search_path_list))
                 }
             }
             _ => None,
