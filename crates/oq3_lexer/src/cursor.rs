@@ -73,7 +73,7 @@ impl<'a> Cursor<'a> {
         (self.len_remaining - self.chars.as_str().len()) as u32
     }
 
-    /// resets the number of bytes consumed to 0.
+    /// Resets the number of bytes consumed to 0.
     pub(crate) fn reset_pos_within_token(&mut self) {
         self.len_remaining = self.chars.as_str().len();
     }
