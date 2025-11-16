@@ -180,7 +180,7 @@ impl Parse<SourceFile> {
 /// In this case any errors are parser errors.
 #[derive(Debug, PartialEq, Eq)]
 pub struct ParseOrErrors<T> {
-    green: Option<GreenNode>,
+    green_maybe: Option<GreenNode>,
     errors: Arc<Vec<SyntaxError>>,
     _ty: PhantomData<fn() -> T>,
 }
@@ -188,7 +188,7 @@ pub struct ParseOrErrors<T> {
 impl<T> Clone for ParseOrErrors<T> {
     fn clone(&self) -> ParseOrErrors<T> {
         ParseOrErrors {
-            green: self.green.clone(),
+            green_maybe: self.green_maybe.clone(),
             errors: self.errors.clone(),
             _ty: PhantomData,
         }
@@ -197,14 +197,14 @@ impl<T> Clone for ParseOrErrors<T> {
 
 impl<T> ParseOrErrors<T> {
     pub fn syntax_node(&self) -> SyntaxNode {
-        SyntaxNode::new_root(self.green.clone().unwrap())
+        SyntaxNode::new_root(self.green_maybe.clone().unwrap())
     }
     pub fn errors(&self) -> &[SyntaxError] {
         &self.errors
     }
     /// Return `true` if a generated parse structure is available.
     pub fn have_parse(&self) -> bool {
-        self.green.is_some()
+        self.green_maybe.is_some()
     }
 }
 
@@ -242,7 +242,7 @@ impl SourceFile {
             assert_eq!(root.kind(), SyntaxKind::SOURCE_FILE);
         }
         ParseOrErrors {
-            green: green_maybe,
+            green_maybe,
             errors: Arc::new(errors),
             _ty: PhantomData,
         }

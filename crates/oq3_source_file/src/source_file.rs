@@ -16,6 +16,11 @@ use std::path::{Path, PathBuf};
 // `synast::SourceFile` has no knowledge of path names, filesystems, io streams, etc.
 pub(crate) type ParsedSource = ParseOrErrors<synast::SourceFile>;
 
+/// Lex and parse the OpenQASM code in `source_string` into an AST.
+/// If any errors occur during lexing, these are stored in place of the syntax errors.
+/// and no parsing of the lexed code is actually done.
+/// In case `source_string` is successfully parsed, also parse any source code inlcuded
+/// via `include` statements.
 pub(crate) fn parse_source_and_includes<P: AsRef<Path>>(
     source_string: &str,
     search_path_list: Option<&[P]>,
