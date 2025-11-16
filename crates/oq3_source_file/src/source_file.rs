@@ -1,10 +1,13 @@
 // Copyright contributors to the openqasm-parser project
 // SPDX-License-Identifier: Apache-2.0
 
+use crate::api::parse_source_file_with_search;
 use crate::api::{inner_print_compiler_errors, parse_source_file, print_compiler_errors};
 use oq3_syntax::ast as synast; // Syntactic AST
 use oq3_syntax::ParseOrErrors;
+use oq3_syntax::SyntaxError;
 use oq3_syntax::TextRange;
+use oq3_syntax::TextSize;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -200,9 +203,15 @@ pub(crate) fn parse_included_files<P: AsRef<Path>>(
                     let full_path = resolve_file_path(&file_path, search_path_list);
                     let maybe_source_string = fs::read_to_string(&full_path);
                     match maybe_source_string {
-                        Ok(source_string) => Some(parse_source_file(file_path, search_path_list)),
+                        Ok(source_string) => Some(parse_source_file_with_search(file_path, search_path_list)),
                         Err(error) => {
                             let errors = syntax_ast.errors();
+//                            use text_size::*;
+                            let start = TextSize::from(5);
+                            let end = TextSize::from(10);
+                            let range = TextRange::new(start, end);
+                            let syntax_error = SyntaxError::new("Cant find the include file", range);
+//                            errors.push(syntax_error);
                             None
                         },
                     }

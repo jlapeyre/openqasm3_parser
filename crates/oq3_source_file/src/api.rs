@@ -16,9 +16,20 @@ use crate::source_file::{
     SourceFile, SourceString,
 };
 
+pub fn parse_source_file<T>(file_path: T) -> SourceFile
+where
+    T: AsRef<Path>,
+{
+    let search_path_list = None::<&[PathBuf]>;
+    let full_path = resolve_file_path(file_path, search_path_list);
+    let (syntax_ast, parsed_included_source) =
+        parse_source_and_includes(read_source_file(&full_path).as_str(), search_path_list);
+    SourceFile::new(full_path, syntax_ast, parsed_included_source)
+}
+
 /// Read source from `file_path` and parse to the syntactic AST.
 /// Parse and store included files recursively.
-pub fn parse_source_file<T, P>(file_path: T, search_path_list: Option<&[P]>) -> SourceFile
+pub fn parse_source_file_with_search<T, P>(file_path: T, search_path_list: Option<&[P]>) -> SourceFile
 where
     T: AsRef<Path>,
     P: AsRef<Path>,
