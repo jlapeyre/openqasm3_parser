@@ -177,7 +177,7 @@ impl Mode {
     // }
 
     /// Whether characters within the literal must be within the ASCII range
-    pub fn characters_should_be_ascii(self) -> bool {
+    fn characters_should_be_ascii(self) -> bool {
         match self {
             Mode::Byte | Mode::ByteStr | Mode::RawByteStr | Mode::BitStr => true,
             Mode::Char | Mode::Str | Mode::RawStr => false,
