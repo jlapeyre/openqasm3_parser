@@ -257,7 +257,7 @@ fn is_id_start(c: char) -> bool {
 /// True if `c` is valid as a non-first character of an identifier.
 /// See [Rust language reference](https://doc.rust-lang.org/reference/identifiers.html) for
 /// a formal definition of valid identifier name.
-pub fn is_id_continue(c: char) -> bool {
+fn is_id_continue(c: char) -> bool {
     unicode_xid::UnicodeXID::is_xid_continue(c)
 }
 
@@ -273,7 +273,7 @@ pub fn is_ident(string: &str) -> bool {
 
 impl Cursor<'_> {
     /// Parses a token from the input string.
-    pub fn advance_token(&mut self) -> Token {
+    fn advance_token(&mut self) -> Token {
         let first_char = match self.bump() {
             Some(c) => c,
             None => return Token::new(TokenKind::Eof, 0),
