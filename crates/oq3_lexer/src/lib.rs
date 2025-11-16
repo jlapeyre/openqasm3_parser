@@ -261,15 +261,16 @@ fn is_id_continue(c: char) -> bool {
     unicode_xid::UnicodeXID::is_xid_continue(c)
 }
 
+/// Unused, so commenting out.
 /// The passed string is lexically an identifier.
-fn is_ident(string: &str) -> bool {
-    let mut chars = string.chars();
-    if let Some(start) = chars.next() {
-        is_id_start(start) && chars.all(is_id_continue)
-    } else {
-        false
-    }
-}
+// fn is_ident(string: &str) -> bool {
+//     let mut chars = string.chars();
+//     if let Some(start) = chars.next() {
+//         is_id_start(start) && chars.all(is_id_continue)
+//     } else {
+//         false
+//     }
+// }
 
 impl Cursor<'_> {
     /// Parses a token from the input string.

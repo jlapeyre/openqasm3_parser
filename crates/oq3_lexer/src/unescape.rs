@@ -159,15 +159,15 @@ pub enum Mode {
 
 impl Mode {
 
-    /// Unused
-    fn in_double_quotes(self) -> bool {
-        match self {
-            Mode::Str | Mode::BitStr | Mode::ByteStr | Mode::RawStr | Mode::RawByteStr => true,
-            //            | Mode::CStr
-            //            | Mode::RawCStr => true,
-            Mode::Char | Mode::Byte => false,
-        }
-    }
+    /// Unused, so comment out
+    // fn in_double_quotes(self) -> bool {
+    //     match self {
+    //         Mode::Str | Mode::BitStr | Mode::ByteStr | Mode::RawStr | Mode::RawByteStr => true,
+    //         //            | Mode::CStr
+    //         //            | Mode::RawCStr => true,
+    //         Mode::Char | Mode::Byte => false,
+    //     }
+    // }
 
     // /// Non-byte literals should have `\xXX` escapes that are within the ASCII range.
     // pub fn ascii_escapes_should_be_ascii(self) -> bool {
@@ -196,13 +196,14 @@ impl Mode {
         }
     }
 
-    pub fn prefix_noraw(self) -> &'static str {
-        match self {
-            Mode::Byte | Mode::ByteStr | Mode::RawByteStr => "b",
-            //            Mode::CStr | Mode::RawCStr => "c",
-            Mode::Char | Mode::Str | Mode::RawStr | Mode::BitStr => "",
-        }
-    }
+    // Unused, so comment out
+    // fn prefix_noraw(self) -> &'static str {
+    //     match self {
+    //         Mode::Byte | Mode::ByteStr | Mode::RawByteStr => "b",
+    //         //            Mode::CStr | Mode::RawCStr => "c",
+    //         Mode::Char | Mode::Str | Mode::RawStr | Mode::BitStr => "",
+    //     }
+    // }
 }
 
 fn scan_escape<T: From<u8> + From<char>>(

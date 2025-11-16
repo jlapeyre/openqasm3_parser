@@ -27,9 +27,10 @@ impl<'a> Cursor<'a> {
         }
     }
 
-    fn as_str(&self) -> &'a str {
-        self.chars.as_str()
-    }
+    /// Unused, so commenting out.
+    // fn as_str(&self) -> &'a str {
+    //     self.chars.as_str()
+    // }
 
     /// Returns the last eaten symbol (or `'\0'` in release builds).
     /// (For debug assertions only.)
@@ -72,7 +73,7 @@ impl<'a> Cursor<'a> {
         (self.len_remaining - self.chars.as_str().len()) as u32
     }
 
-    /// Resets the number of bytes consumed to 0.
+    /// resets the number of bytes consumed to 0.
     pub(crate) fn reset_pos_within_token(&mut self) {
         self.len_remaining = self.chars.as_str().len();
     }
