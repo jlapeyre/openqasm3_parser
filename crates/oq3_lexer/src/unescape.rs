@@ -158,7 +158,9 @@ pub enum Mode {
 }
 
 impl Mode {
-    pub fn in_double_quotes(self) -> bool {
+
+    /// Unused
+    fn in_double_quotes(self) -> bool {
         match self {
             Mode::Str | Mode::BitStr | Mode::ByteStr | Mode::RawStr | Mode::RawByteStr => true,
             //            | Mode::CStr
@@ -186,7 +188,7 @@ impl Mode {
     }
 
     /// Byte literals do not allow unicode escape.
-    pub fn is_unicode_escape_disallowed(self) -> bool {
+    fn is_unicode_escape_disallowed(self) -> bool {
         match self {
             Mode::Byte | Mode::ByteStr | Mode::RawByteStr | Mode::BitStr => true,
             Mode::Char | Mode::Str | Mode::RawStr => false,
