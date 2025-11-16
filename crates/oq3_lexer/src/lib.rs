@@ -8,6 +8,7 @@
 //!
 //! The main entity of this crate is the [`TokenKind`] enum which represents common
 //! lexeme types.
+//! The entry point into this lexer is the function [`tokenize`]
 #![deny(rustc::untranslatable_diagnostic)]
 #![deny(rustc::diagnostic_outside_of_impl)]
 
@@ -197,8 +198,8 @@ pub enum Base {
     Hexadecimal = 16,
 }
 
-/// Creates an iterator that produces tokens from the input string.
 /// `tokenize` is the entry point into the lexer.
+/// Creates an iterator that produces tokens from the input string.
 pub fn tokenize(input: &str) -> impl Iterator<Item = Token> + '_ {
     let mut cursor = Cursor::new(input);
     std::iter::from_fn(move || {
