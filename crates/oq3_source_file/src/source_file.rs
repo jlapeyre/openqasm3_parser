@@ -1,17 +1,13 @@
 // Copyright contributors to the openqasm-parser project
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::api::parse_source_file_with_search;
 use crate::api::{inner_print_compiler_errors, parse_source_file, print_compiler_errors};
 use oq3_syntax::ast as synast; // Syntactic AST
 use oq3_syntax::ParseOrErrors;
-use oq3_syntax::SyntaxError;
 use oq3_syntax::TextRange;
-use oq3_syntax::TextSize;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::io;
 
 // `SourceFile` is a misnomer. It actually just works with the source as a string.
 // `synast::SourceFile` has no knowledge of path names, filesystems, io streams, etc.
@@ -120,7 +116,6 @@ impl SourceFile {
             file_path,
             syntax_ast,
             included,
-            include_error: None,
         }
     }
 
@@ -199,27 +194,19 @@ pub(crate) fn parse_included_files<P: AsRef<Path>>(
     syntax_ast
         .tree()
         .statements()
-        .filter_map(|parse_stmt| {
-            match parse_stmt {
-                synast::Stmt::Include(include) => {
+        .filter_map(|parse_stmt| match parse_stmt {
+            synast::Stmt::Include(include) => {
                 let file: synast::FilePath = include.file().unwrap();
                 let file_path = file.to_string().unwrap();
                 // stdgates.inc will be handled "as if" it really existed.
                 if file_path == "stdgates.inc" {
                     None
                 } else {
-                    let full_path = resolve_file_path(&file_path, search_path_list);
-                    let maybe_source_string = fs::read_to_string(&full_path);
-                    match maybe_source_string {
-                        Ok(source_string) => Some(parse_source_file_with_search(file_path, search_path_list)),
-                        Err(error) => {
-                            None
-                        },
-                    }
+                    Some(parse_source_file(file_path, search_path_list))
                 }
             }
             _ => None,
-                    } })
+        })
         .collect::<Vec<_>>()
 }
 
@@ -235,20 +222,11 @@ pub struct SourceString {
     pub(crate) included: Vec<SourceFile>,
 }
 
-/// Information on error encountered when reading a file
-/// via an OQ3 `include` statement.
-#[derive(Clone, Debug)]
-pub struct IncludeError {
-    error: io::ErrorKind,
-    include: synast::Include,
-}
-
 #[derive(Clone, Debug)]
 pub struct SourceFile {
     file_path: PathBuf,
     syntax_ast: ParsedSource,
     included: Vec<SourceFile>,
-    include_error: Option<IncludeError>,
 }
 
 impl SourceTrait for SourceString {
