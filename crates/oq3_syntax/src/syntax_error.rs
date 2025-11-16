@@ -24,7 +24,6 @@ pub struct SyntaxError(String, TextRange);
 // }
 
 impl SyntaxError {
-
     /// Create a new syntax error with message `message`.
     /// The text range into the source file given by `range`.
     pub fn new(message: impl Into<String>, range: TextRange) -> Self {

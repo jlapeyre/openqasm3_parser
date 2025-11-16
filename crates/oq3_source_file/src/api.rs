@@ -26,7 +26,10 @@ where
 
 /// Read source from `file_path` and parse to the syntactic AST.
 /// Parse and store included files recursively.
-pub fn parse_source_file_with_search<T, P>(file_path: T, search_path_list: Option<&[P]>) -> SourceFile
+pub fn parse_source_file_with_search<T, P>(
+    file_path: T,
+    search_path_list: Option<&[P]>,
+) -> SourceFile
 where
     T: AsRef<Path>,
     P: AsRef<Path>,

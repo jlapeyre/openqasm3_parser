@@ -218,7 +218,6 @@ impl<T: AstNode> ParseOrErrors<T> {
 pub use crate::ast::SourceFile;
 
 impl SourceFile {
-
     /// This function is semi-obsolete, having been replaced by parse_check_lex.
     /// `parse` is called in a few demos and tests, etc.
     ///  Calls to this function could/should be replace by calls to parse_check_lex.
