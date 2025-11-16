@@ -27,7 +27,7 @@ impl<'a> Cursor<'a> {
         }
     }
 
-    pub fn as_str(&self) -> &'a str {
+    fn as_str(&self) -> &'a str {
         self.chars.as_str()
     }
 
