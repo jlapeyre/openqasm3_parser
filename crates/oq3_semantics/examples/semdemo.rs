@@ -9,7 +9,7 @@ use oq3_lexer::{tokenize, Token};
 use oq3_parser::SyntaxKind;
 use oq3_semantics::syntax_to_semantics;
 use oq3_source_file::SourceTrait;
-use oq3_syntax::{parse_text, parse_text_check_lex, GreenNode, SourceFile};
+use oq3_syntax::{GreenNode, SourceFile};
 use rowan::NodeOrToken; // TODO: this can be accessed from a higher level
 
 #[derive(Parser)]
@@ -81,8 +81,7 @@ fn main() {
         Some(Commands::SemanticString { file_name }) => {
             let source = read_example_source(file_name);
             let file_name = Some("giraffe");
-            let result =
-                syntax_to_semantics::parse_source_string(source, file_name);
+            let result = syntax_to_semantics::parse_source_string(source, file_name);
             if result.any_errors() {
                 result.print_errors();
             }
@@ -139,11 +138,14 @@ fn main() {
         }
 
         Some(Commands::ParseGreen { file_name }) => {
-            let (green_node, syntax_errors) = parse_text_check_lex(&read_example_source(file_name));
+            let (green_node, syntax_errors) =
+                oq3_syntax::parse_text_check_lex(&read_example_source(file_name));
             if let Some(green_node) = green_node {
                 println!("{green_node:?}");
                 println!("{:?}", green_node.kind());
                 print_node_or_token(green_node, 0);
+            } else {
+                println!("Lexing errors found. No parsing was done.");
             }
             println!(
                 "\nFound {} parse errors:\n{:?}",
@@ -174,12 +176,17 @@ fn read_example_source(file_path: &PathBuf) -> String {
 fn print_tree(file: SourceFile) {
     use oq3_syntax::ast::AstNode;
     for item in file.syntax().descendants() {
+        let tr: usize = item.text_range().start().into();
+//    let r2: usize = range.end().into();
+
+//        let tr = item.text_range().start();
+        println!("{tr:} <---");
         println!("{item:?}: {item:}");
     }
 }
 
 fn print_node_or_token(item: GreenNode, depth: usize) {
-    let spcs = " ".repeat(depth);
+    let spaces = " ".repeat(depth);
     for child in item.children() {
         //        println!("{}{}: {} : {:?}", spcs, i, child, child);
         match child {
@@ -187,10 +194,10 @@ fn print_node_or_token(item: GreenNode, depth: usize) {
                 print_node_or_token(node.to_owned(), depth + 1);
             }
             NodeOrToken::Token(token) => {
-                let sk = SyntaxKind::from(token.kind().0);
-                println!("{}  {:?} {:?}", spcs, sk, token.text());
+                let syntax_kind = SyntaxKind::from(token.kind().0);
+                println!("{}  {:?} {:?}", spaces, syntax_kind, token.text());
             }
         };
     }
-    println!("{spcs}<");
+    println!("{spaces}<");
 }

@@ -185,6 +185,7 @@ pub(crate) fn read_source_file(file_path: &Path) -> String {
     }
 }
 
+use oq3_syntax::AstNode;
 // FIXME: prevent a file from including itself. Then there are two-file cycles, etc.
 ///  Recursively parse any files `include`d in the program `syntax_ast`.
 /// `syntax_ast` -- the already-parsed parent source file.
@@ -196,8 +197,9 @@ pub(crate) fn parse_included_files<P: AsRef<Path>>(
     syntax_ast
         .tree()
         .statements()
-        .filter_map(|parse_stmt| match parse_stmt {
-            synast::Stmt::Include(include) => {
+        .filter_map(|parse_stmt| {
+            match parse_stmt {
+                synast::Stmt::Include(include) => {
                 let file: synast::FilePath = include.file().unwrap();
                 let file_path = file.to_string().unwrap();
                 // stdgates.inc will be handled "as if" it really existed.
@@ -209,6 +211,8 @@ pub(crate) fn parse_included_files<P: AsRef<Path>>(
                     match maybe_source_string {
                         Ok(source_string) => Some(parse_source_file_with_search(file_path, search_path_list)),
                         Err(error) => {
+                            let include_ast_node = include.syntax();
+                            let tr = include_ast_node.text_range();
                             let errors = syntax_ast.errors();
 //                            use text_size::*;
                             let start = TextSize::from(5);
@@ -224,7 +228,7 @@ pub(crate) fn parse_included_files<P: AsRef<Path>>(
                 }
             }
             _ => None,
-        })
+                    } })
         .collect::<Vec<_>>()
 }
 
