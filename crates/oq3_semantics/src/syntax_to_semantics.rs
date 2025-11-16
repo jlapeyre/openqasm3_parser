@@ -139,7 +139,6 @@ pub fn parse_source_file<T>(
 where
     T: AsRef<Path>,
 {
-//    let search_path_list = None::<&[PathBuf]>;
     let parsed_source: SourceFile = oq3_source_file::parse_source_file(file_path); // search_path_list);
     analyze_source(parsed_source)
 }
@@ -189,11 +188,6 @@ pub fn syntax_to_semantic<T: SourceTrait>(
                     context.standard_library_gates(&include);
                 } else {
                     let next_parsed_included_source = included_iter.next();
-                    if next_parsed_included_source.is_none() {
-                        let errors = parsed_source.syntax_ast().errors();
-                        // dbg!(errors.len());
-                        // dbg!(errors);
-                    }
                     // Get SourceFile object with syntax AST for the next included file.
                     // If an error prevented including the source file, then this is None.
                     if let Some(included_parsed_source) = next_parsed_included_source {

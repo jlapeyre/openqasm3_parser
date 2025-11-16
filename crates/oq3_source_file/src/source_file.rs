@@ -11,6 +11,7 @@ use oq3_syntax::TextSize;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::io;
 
 // `SourceFile` is a misnomer. It actually just works with the source as a string.
 // `synast::SourceFile` has no knowledge of path names, filesystems, io streams, etc.
@@ -119,6 +120,7 @@ impl SourceFile {
             file_path,
             syntax_ast,
             included,
+            include_error: None,
         }
     }
 
@@ -211,20 +213,9 @@ pub(crate) fn parse_included_files<P: AsRef<Path>>(
                     match maybe_source_string {
                         Ok(source_string) => Some(parse_source_file_with_search(file_path, search_path_list)),
                         Err(error) => {
-                            let include_ast_node = include.syntax();
-                            let tr = include_ast_node.text_range();
-                            let errors = syntax_ast.errors();
-//                            use text_size::*;
-                            let start = TextSize::from(5);
-                            let end = TextSize::from(10);
-                            let range = TextRange::new(start, end);
-                            let syntax_error = SyntaxError::new("Cant find the include file", range);
-//                            errors.push(syntax_error);
                             None
                         },
                     }
-//                    let source_string = read_source_file(&full_path).as_str();
-//                    Some(parse_source_file(file_path, search_path_list))
                 }
             }
             _ => None,
@@ -244,11 +235,20 @@ pub struct SourceString {
     pub(crate) included: Vec<SourceFile>,
 }
 
+/// Information on error encountered when reading a file
+/// via an OQ3 `include` statement.
+#[derive(Clone, Debug)]
+pub struct IncludeError {
+    error: io::ErrorKind,
+    include: synast::Include,
+}
+
 #[derive(Clone, Debug)]
 pub struct SourceFile {
     file_path: PathBuf,
     syntax_ast: ParsedSource,
     included: Vec<SourceFile>,
+    include_error: Option<IncludeError>,
 }
 
 impl SourceTrait for SourceString {
