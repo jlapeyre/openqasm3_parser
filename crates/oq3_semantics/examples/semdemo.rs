@@ -176,11 +176,6 @@ fn read_example_source(file_path: &PathBuf) -> String {
 fn print_tree(file: SourceFile) {
     use oq3_syntax::ast::AstNode;
     for item in file.syntax().descendants() {
-        let tr: usize = item.text_range().start().into();
-//    let r2: usize = range.end().into();
-
-//        let tr = item.text_range().start();
-        println!("{tr:} <---");
         println!("{item:?}: {item:}");
     }
 }
