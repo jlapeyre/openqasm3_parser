@@ -9,7 +9,7 @@ use oq3_lexer::{tokenize, Token};
 use oq3_parser::SyntaxKind;
 use oq3_semantics::syntax_to_semantics;
 use oq3_source_file::SourceTrait;
-use oq3_syntax::{parse_text, GreenNode, SourceFile};
+use oq3_syntax::{parse_text, parse_text_check_lex, GreenNode, SourceFile};
 use rowan::NodeOrToken; // TODO: this can be accessed from a higher level
 
 #[derive(Parser)]
@@ -139,10 +139,12 @@ fn main() {
         }
 
         Some(Commands::ParseGreen { file_name }) => {
-            let (green_node, syntax_errors) = parse_text(&read_example_source(file_name));
-            println!("{green_node:?}");
-            println!("{:?}", green_node.kind());
-            print_node_or_token(green_node, 0);
+            let (green_node, syntax_errors) = parse_text_check_lex(&read_example_source(file_name));
+            if let Some(green_node) = green_node {
+                println!("{green_node:?}");
+                println!("{:?}", green_node.kind());
+                print_node_or_token(green_node, 0);
+            }
             println!(
                 "\nFound {} parse errors:\n{:?}",
                 syntax_errors.len(),

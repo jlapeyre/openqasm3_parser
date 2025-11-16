@@ -46,7 +46,7 @@ use triomphe::Arc;
 
 pub use crate::{
     ast::{AstNode, AstToken, BlockOrStmt, HasTextNode},
-    parsing::parse_text,
+    parsing::{parse_text, parse_text_check_lex},
     ptr::{AstPtr, SyntaxNodePtr},
     syntax_error::SyntaxError,
     syntax_node::{
