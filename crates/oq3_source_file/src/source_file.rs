@@ -185,7 +185,6 @@ pub(crate) fn read_source_file(file_path: &Path) -> String {
     }
 }
 
-
 // FIXME: prevent a file from including itself. Then there are two-file cycles, etc.
 ///  Recursively parse any files `include`d in the program `syntax_ast`.
 /// `syntax_ast` -- the already-parsed parent source file.

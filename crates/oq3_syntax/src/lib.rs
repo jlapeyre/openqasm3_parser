@@ -218,8 +218,12 @@ impl<T: AstNode> ParseOrErrors<T> {
 pub use crate::ast::SourceFile;
 
 impl SourceFile {
-    pub fn parse(text: &str) -> Parse<SourceFile> {
-        let (green, mut errors) = parsing::parse_text(text);
+
+    /// This function is semi-obsolete, having been replaced by parse_check_lex.
+    /// `parse` is called in a few demos and tests, etc.
+    ///  Calls to this function could/should be replace by calls to parse_check_lex.
+    pub fn parse(openqasm_code_text: &str) -> Parse<SourceFile> {
+        let (green, mut errors) = parsing::parse_text(openqasm_code_text);
         let root = SyntaxNode::new_root(green.clone());
         errors.extend(validation::validate(&root));
         assert_eq!(root.kind(), SyntaxKind::SOURCE_FILE);
@@ -234,8 +238,10 @@ impl SourceFile {
     /// The green tree is wrapped in `Option` to account for the case
     /// that there *are* lexing errors and no parsing is done and no
     /// tree is built.
-    pub fn parse_check_lex(text: &str) -> ParseOrErrors<SourceFile> {
-        let (green_maybe, mut errors) = parsing::parse_text_check_lex(text);
+    /// In the latter case, the lexing errors are stored as if they were
+    /// syntax errors.
+    pub fn parse_check_lex(openqasm_code_text: &str) -> ParseOrErrors<SourceFile> {
+        let (green_maybe, mut errors) = parsing::parse_text_check_lex(openqasm_code_text);
         if let Some(ref green) = green_maybe {
             let root = SyntaxNode::new_root(green.clone());
             errors.extend(validation::validate(&root));
