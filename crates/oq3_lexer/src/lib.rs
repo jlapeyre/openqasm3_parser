@@ -198,6 +198,7 @@ pub enum Base {
 }
 
 /// Creates an iterator that produces tokens from the input string.
+/// `tokenize` is the entry point into the lexer.
 pub fn tokenize(input: &str) -> impl Iterator<Item = Token> + '_ {
     let mut cursor = Cursor::new(input);
     std::iter::from_fn(move || {
@@ -213,7 +214,7 @@ pub fn tokenize(input: &str) -> impl Iterator<Item = Token> + '_ {
 /// True if `c` is considered a whitespace according to Rust language definition.
 /// See [Rust language reference](https://doc.rust-lang.org/reference/whitespace.html)
 /// for definitions of these classes.
-pub fn is_whitespace(c: char) -> bool {
+fn is_whitespace(c: char) -> bool {
     // This is Pattern_White_Space.
     //
     // Note that this set is stable (ie, it doesn't change with different
@@ -246,7 +247,7 @@ pub fn is_whitespace(c: char) -> bool {
 /// True if `c` is valid as a first character of an identifier.
 /// See [Rust language reference](https://doc.rust-lang.org/reference/identifiers.html) for
 /// a formal definition of valid identifier name.
-pub fn is_id_start(c: char) -> bool {
+fn is_id_start(c: char) -> bool {
     // This is XID_Start OR '_' (which formally is not a XID_Start).
     //    c == '_' || c == '$' || unicode_xid::UnicodeXID::is_xid_start(c)
     c == '_' || unicode_xid::UnicodeXID::is_xid_start(c)
