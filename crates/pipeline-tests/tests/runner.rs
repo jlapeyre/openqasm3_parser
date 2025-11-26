@@ -63,32 +63,24 @@ mod suite {
         &src[offset..]
     }
 
+    use tempfile::{Builder, NamedTempFile};
+
+    use std::io::{self, Write};
+
     pub struct TempQasm {
-        path: std::path::PathBuf,
+        file: NamedTempFile, // auto-deletes on drop
     }
+
     impl TempQasm {
-        pub fn new(body: &str) -> std::io::Result<Self> {
-            use std::{
-                fs,
-                time::{SystemTime, UNIX_EPOCH},
-            };
-            let mut p = std::env::temp_dir();
-            let ts = SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .unwrap()
-                .as_nanos();
-            let pid = std::process::id();
-            p.push(format!("oq3-snippet-{pid}-{ts}.qasm"));
-            fs::write(&p, body)?;
-            Ok(Self { path: p })
+        pub fn new(body: &str) -> io::Result<Self> {
+            let mut file = Builder::new().prefix("oq3-").suffix(".qasm").tempfile()?; // unique random name
+            file.write_all(body.as_bytes())?;
+            file.flush()?;
+            Ok(Self { file })
         }
-        pub fn path(&self) -> &std::path::Path {
-            &self.path
-        }
-    }
-    impl Drop for TempQasm {
-        fn drop(&mut self) {
-            let _ = std::fs::remove_file(&self.path);
+
+        pub fn path(&self) -> &Path {
+            self.file.path()
         }
     }
 
