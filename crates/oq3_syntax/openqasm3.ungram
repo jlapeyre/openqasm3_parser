@@ -91,6 +91,7 @@ Stmt =
 | Reset
 | SwitchCaseStmt
 | VersionString
+| VersionStmt
 | WhileStmt
 
 // "thelabel" is in the list of manually implemented elements.
@@ -124,6 +125,8 @@ DelayStmt =
 
 EndStmt =
   'end' ';'
+
+VersionStatement
 
 VersionString =
   'OPENQASM' version:Version ';'
