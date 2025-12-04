@@ -93,6 +93,11 @@ pub(crate) fn stmt(p: &mut Parser<'_>) {
         return;
     }
 
+    if p.at(T![nop]) {
+        nop_stmt(p, m);
+        return;
+    }
+
     if p.at(T![qreg]) {
         return q_or_c_reg_declaration(p, m);
     }
@@ -174,6 +179,14 @@ fn q_or_c_reg_declaration(p: &mut Parser<'_>, m: Marker) {
     q_or_c_reg_param(p);
     p.expect(T![;]);
     m.complete(p, OLD_STYLE_DECLARATION_STMT);
+}
+
+fn nop_stmt(p: &mut Parser<'_>, m: Marker) -> CompletedMarker {
+    assert!(p.at(T![nop]));
+    p.bump(T![nop]);
+    params::arg_list_gate_call_qubits(p);
+    p.expect(SEMICOLON);
+    m.complete(p, NOP_STMT)
 }
 
 // Careful, this reads til } *or* EOF. And this may be called without having read a

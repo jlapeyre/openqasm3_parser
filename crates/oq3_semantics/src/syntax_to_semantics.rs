@@ -40,6 +40,13 @@ macro_rules! not_impl {
     }};
 }
 
+macro_rules! not_impl_expr {
+    ($ctx:expr, $node:expr) => {{
+        $ctx.insert_error(NotImplementedError, &$node);
+        Some(asg::TExpr::new(asg::Expr::NullExpr, Type::ToDo))
+    }};
+}
+
 pub struct ParseResult<T: SourceTrait> {
     syntax_result: T, // syntax tree and errors
     context: Context, // semantic asg and errors
@@ -363,6 +370,10 @@ fn stmt_to_asg_stmt(stmt: synast::Stmt, context: &mut Context) -> Option<asg::St
         ),
 
         oq3_syntax::ast::Stmt::OldStyleDeclarationStmt(n) => {
+            not_impl!(context, n)
+        }
+
+        oq3_syntax::ast::Stmt::NopStmt(n) => {
             not_impl!(context, n)
         }
 
@@ -832,7 +843,7 @@ fn expr_to_asg_texpr(
 
         synast::Expr::ArrayExpr(_) => panic!("ArrayExpr not supported {expr:?}"),
         synast::Expr::ArrayLiteral(_) => panic!("ArrayLiteral not supported {expr:?}"),
-        synast::Expr::BoxExpr(_) => panic!("BoxExpr not supported {expr:?}"),
+        synast::Expr::BoxExpr(n) => not_impl_expr!(context, n),
         synast::Expr::GateCallExpr(_)
         | synast::Expr::GPhaseCallExpr(_)
         | synast::Expr::DimExpr(_)

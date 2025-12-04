@@ -85,6 +85,7 @@ Stmt =
 | IODeclarationStmt
 | LetStmt
 | Measure
+| NopStmt
 | OldStyleDeclarationStmt
 | PragmaStmt
 | QuantumDeclarationStmt

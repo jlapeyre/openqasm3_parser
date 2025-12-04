@@ -401,6 +401,21 @@ impl Measure {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct NopStmt {
+    pub(crate) syntax: SyntaxNode,
+}
+impl NopStmt {
+    pub fn nop_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![nop])
+    }
+    pub fn qubit_list(&self) -> Option<QubitList> {
+        support::child(&self.syntax)
+    }
+    pub fn semicolon_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![;])
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct OldStyleDeclarationStmt {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1130,21 +1145,6 @@ impl NegCtrlModifier {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct NopStmt {
-    pub(crate) syntax: SyntaxNode,
-}
-impl NopStmt {
-    pub fn nop_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![nop])
-    }
-    pub fn qubit_list(&self) -> Option<QubitList> {
-        support::child(&self.syntax)
-    }
-    pub fn semicolon_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![;])
-    }
-}
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ForIterable {
     pub(crate) syntax: SyntaxNode,
 }
@@ -1210,6 +1210,7 @@ pub enum Stmt {
     IODeclarationStmt(IODeclarationStmt),
     LetStmt(LetStmt),
     Measure(Measure),
+    NopStmt(NopStmt),
     OldStyleDeclarationStmt(OldStyleDeclarationStmt),
     PragmaStmt(PragmaStmt),
     QuantumDeclarationStmt(QuantumDeclarationStmt),
@@ -1629,6 +1630,21 @@ impl AstNode for LetStmt {
 impl AstNode for Measure {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == MEASURE
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for NopStmt {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == NOP_STMT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -2406,21 +2422,6 @@ impl AstNode for NegCtrlModifier {
         &self.syntax
     }
 }
-impl AstNode for NopStmt {
-    fn can_cast(kind: SyntaxKind) -> bool {
-        kind == NOP_STMT
-    }
-    fn cast(syntax: SyntaxNode) -> Option<Self> {
-        if Self::can_cast(syntax.kind()) {
-            Some(Self { syntax })
-        } else {
-            None
-        }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.syntax
-    }
-}
 impl AstNode for ForIterable {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == FOR_ITERABLE
@@ -2576,6 +2577,11 @@ impl From<Measure> for Stmt {
         Stmt::Measure(node)
     }
 }
+impl From<NopStmt> for Stmt {
+    fn from(node: NopStmt) -> Stmt {
+        Stmt::NopStmt(node)
+    }
+}
 impl From<OldStyleDeclarationStmt> for Stmt {
     fn from(node: OldStyleDeclarationStmt) -> Stmt {
         Stmt::OldStyleDeclarationStmt(node)
@@ -2637,6 +2643,7 @@ impl AstNode for Stmt {
                 | I_O_DECLARATION_STMT
                 | LET_STMT
                 | MEASURE
+                | NOP_STMT
                 | OLD_STYLE_DECLARATION_STMT
                 | PRAGMA_STMT
                 | QUANTUM_DECLARATION_STMT
@@ -2672,6 +2679,7 @@ impl AstNode for Stmt {
             I_O_DECLARATION_STMT => Stmt::IODeclarationStmt(IODeclarationStmt { syntax }),
             LET_STMT => Stmt::LetStmt(LetStmt { syntax }),
             MEASURE => Stmt::Measure(Measure { syntax }),
+            NOP_STMT => Stmt::NopStmt(NopStmt { syntax }),
             OLD_STYLE_DECLARATION_STMT => {
                 Stmt::OldStyleDeclarationStmt(OldStyleDeclarationStmt { syntax })
             }
@@ -2711,6 +2719,7 @@ impl AstNode for Stmt {
             Stmt::IODeclarationStmt(it) => &it.syntax,
             Stmt::LetStmt(it) => &it.syntax,
             Stmt::Measure(it) => &it.syntax,
+            Stmt::NopStmt(it) => &it.syntax,
             Stmt::OldStyleDeclarationStmt(it) => &it.syntax,
             Stmt::PragmaStmt(it) => &it.syntax,
             Stmt::QuantumDeclarationStmt(it) => &it.syntax,
@@ -3293,6 +3302,11 @@ impl std::fmt::Display for Measure {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for NopStmt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for OldStyleDeclarationStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -3544,11 +3558,6 @@ impl std::fmt::Display for CtrlModifier {
     }
 }
 impl std::fmt::Display for NegCtrlModifier {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Display::fmt(self.syntax(), f)
-    }
-}
-impl std::fmt::Display for NopStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
