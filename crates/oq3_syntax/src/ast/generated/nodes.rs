@@ -538,7 +538,7 @@ impl CaseExpr {
     pub fn case_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![case])
     }
-    pub fn expression_list(&self) -> Option<ExpressionList> {
+    pub fn expr_list(&self) -> Option<ExprList> {
         support::child(&self.syntax)
     }
     pub fn block_expr(&self) -> Option<BlockExpr> {
@@ -561,10 +561,10 @@ impl BlockExpr {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ExpressionList {
+pub struct ExprList {
     pub(crate) syntax: SyntaxNode,
 }
-impl ExpressionList {
+impl ExprList {
     pub fn exprs(&self) -> AstChildren<Expr> {
         support::children(&self.syntax)
     }
@@ -689,7 +689,7 @@ impl ArrayRefType {
     pub fn comma_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![,])
     }
-    pub fn expression_list(&self) -> Option<ExpressionList> {
+    pub fn expr_list(&self) -> Option<ExprList> {
         support::child(&self.syntax)
     }
     pub fn dim_expr(&self) -> Option<DimExpr> {
@@ -802,7 +802,7 @@ impl ArrayLiteral {
     pub fn l_curly_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['{'])
     }
-    pub fn expression_list(&self) -> Option<ExpressionList> {
+    pub fn expr_list(&self) -> Option<ExprList> {
         support::child(&self.syntax)
     }
     pub fn r_curly_token(&self) -> Option<SyntaxToken> {
@@ -837,10 +837,10 @@ impl CallExpr {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct CastExpression {
+pub struct CastExpr {
     pub(crate) syntax: SyntaxNode,
 }
-impl CastExpression {
+impl CastExpr {
     pub fn scalar_type(&self) -> Option<ScalarType> {
         support::child(&self.syntax)
     }
@@ -935,10 +935,10 @@ impl TimingLiteral {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct MeasureExpression {
+pub struct MeasureExpr {
     pub(crate) syntax: SyntaxNode,
 }
-impl MeasureExpression {
+impl MeasureExpr {
     pub fn measure_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![measure])
     }
@@ -1041,7 +1041,7 @@ impl ArgList {
     pub fn l_paren_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['('])
     }
-    pub fn expression_list(&self) -> Option<ExpressionList> {
+    pub fn expr_list(&self) -> Option<ExprList> {
         support::child(&self.syntax)
     }
     pub fn r_paren_token(&self) -> Option<SyntaxToken> {
@@ -1065,7 +1065,7 @@ impl ArrayType {
     pub fn comma_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![,])
     }
-    pub fn expression_list(&self) -> Option<ExpressionList> {
+    pub fn expr_list(&self) -> Option<ExprList> {
         support::child(&self.syntax)
     }
     pub fn r_brack_token(&self) -> Option<SyntaxToken> {
@@ -1134,7 +1134,7 @@ pub struct ForIterable {
     pub(crate) syntax: SyntaxNode,
 }
 impl ForIterable {
-    pub fn set_expression(&self) -> Option<SetExpression> {
+    pub fn set_expr(&self) -> Option<SetExpr> {
         support::child(&self.syntax)
     }
     pub fn range_expr(&self) -> Option<RangeExpr> {
@@ -1145,14 +1145,14 @@ impl ForIterable {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct SetExpression {
+pub struct SetExpr {
     pub(crate) syntax: SyntaxNode,
 }
-impl SetExpression {
+impl SetExpr {
     pub fn l_curly_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['{'])
     }
-    pub fn expression_list(&self) -> Option<ExpressionList> {
+    pub fn expr_list(&self) -> Option<ExprList> {
         support::child(&self.syntax)
     }
     pub fn r_curly_token(&self) -> Option<SyntaxToken> {
@@ -1211,7 +1211,7 @@ pub enum Expr {
     BlockExpr(BlockExpr),
     BoxExpr(BoxExpr),
     CallExpr(CallExpr),
-    CastExpression(CastExpression),
+    CastExpr(CastExpr),
     GateCallExpr(GateCallExpr),
     GPhaseCallExpr(GPhaseCallExpr),
     HardwareQubit(HardwareQubit),
@@ -1220,7 +1220,7 @@ pub enum Expr {
     IndexedIdentifier(IndexedIdentifier),
     Literal(Literal),
     TimingLiteral(TimingLiteral),
-    MeasureExpression(MeasureExpression),
+    MeasureExpr(MeasureExpr),
     ModifiedGateCallExpr(ModifiedGateCallExpr),
     ParenExpr(ParenExpr),
     PrefixExpr(PrefixExpr),
@@ -1248,8 +1248,8 @@ pub enum Modifier {
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum IndexKind {
-    SetExpression(SetExpression),
-    ExpressionList(ExpressionList),
+    SetExpr(SetExpr),
+    ExprList(ExprList),
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum AssignmentLhs {
@@ -1776,9 +1776,9 @@ impl AstNode for BlockExpr {
         &self.syntax
     }
 }
-impl AstNode for ExpressionList {
+impl AstNode for ExprList {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == EXPRESSION_LIST
+        kind == EXPR_LIST
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -2061,9 +2061,9 @@ impl AstNode for CallExpr {
         &self.syntax
     }
 }
-impl AstNode for CastExpression {
+impl AstNode for CastExpr {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == CAST_EXPRESSION
+        kind == CAST_EXPR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -2196,9 +2196,9 @@ impl AstNode for TimingLiteral {
         &self.syntax
     }
 }
-impl AstNode for MeasureExpression {
+impl AstNode for MeasureExpr {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == MEASURE_EXPRESSION
+        kind == MEASURE_EXPR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -2406,9 +2406,9 @@ impl AstNode for ForIterable {
         &self.syntax
     }
 }
-impl AstNode for SetExpression {
+impl AstNode for SetExpr {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == SET_EXPRESSION
+        kind == SET_EXPR
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -2721,9 +2721,9 @@ impl From<CallExpr> for Expr {
         Expr::CallExpr(node)
     }
 }
-impl From<CastExpression> for Expr {
-    fn from(node: CastExpression) -> Expr {
-        Expr::CastExpression(node)
+impl From<CastExpr> for Expr {
+    fn from(node: CastExpr) -> Expr {
+        Expr::CastExpr(node)
     }
 }
 impl From<GateCallExpr> for Expr {
@@ -2766,9 +2766,9 @@ impl From<TimingLiteral> for Expr {
         Expr::TimingLiteral(node)
     }
 }
-impl From<MeasureExpression> for Expr {
-    fn from(node: MeasureExpression) -> Expr {
-        Expr::MeasureExpression(node)
+impl From<MeasureExpr> for Expr {
+    fn from(node: MeasureExpr) -> Expr {
+        Expr::MeasureExpr(node)
     }
 }
 impl From<ModifiedGateCallExpr> for Expr {
@@ -2811,7 +2811,7 @@ impl AstNode for Expr {
                 | BLOCK_EXPR
                 | BOX_EXPR
                 | CALL_EXPR
-                | CAST_EXPRESSION
+                | CAST_EXPR
                 | GATE_CALL_EXPR
                 | G_PHASE_CALL_EXPR
                 | HARDWARE_QUBIT
@@ -2820,7 +2820,7 @@ impl AstNode for Expr {
                 | INDEXED_IDENTIFIER
                 | LITERAL
                 | TIMING_LITERAL
-                | MEASURE_EXPRESSION
+                | MEASURE_EXPR
                 | MODIFIED_GATE_CALL_EXPR
                 | PAREN_EXPR
                 | PREFIX_EXPR
@@ -2837,7 +2837,7 @@ impl AstNode for Expr {
             BLOCK_EXPR => Expr::BlockExpr(BlockExpr { syntax }),
             BOX_EXPR => Expr::BoxExpr(BoxExpr { syntax }),
             CALL_EXPR => Expr::CallExpr(CallExpr { syntax }),
-            CAST_EXPRESSION => Expr::CastExpression(CastExpression { syntax }),
+            CAST_EXPR => Expr::CastExpr(CastExpr { syntax }),
             GATE_CALL_EXPR => Expr::GateCallExpr(GateCallExpr { syntax }),
             G_PHASE_CALL_EXPR => Expr::GPhaseCallExpr(GPhaseCallExpr { syntax }),
             HARDWARE_QUBIT => Expr::HardwareQubit(HardwareQubit { syntax }),
@@ -2846,7 +2846,7 @@ impl AstNode for Expr {
             INDEXED_IDENTIFIER => Expr::IndexedIdentifier(IndexedIdentifier { syntax }),
             LITERAL => Expr::Literal(Literal { syntax }),
             TIMING_LITERAL => Expr::TimingLiteral(TimingLiteral { syntax }),
-            MEASURE_EXPRESSION => Expr::MeasureExpression(MeasureExpression { syntax }),
+            MEASURE_EXPR => Expr::MeasureExpr(MeasureExpr { syntax }),
             MODIFIED_GATE_CALL_EXPR => Expr::ModifiedGateCallExpr(ModifiedGateCallExpr { syntax }),
             PAREN_EXPR => Expr::ParenExpr(ParenExpr { syntax }),
             PREFIX_EXPR => Expr::PrefixExpr(PrefixExpr { syntax }),
@@ -2865,7 +2865,7 @@ impl AstNode for Expr {
             Expr::BlockExpr(it) => &it.syntax,
             Expr::BoxExpr(it) => &it.syntax,
             Expr::CallExpr(it) => &it.syntax,
-            Expr::CastExpression(it) => &it.syntax,
+            Expr::CastExpr(it) => &it.syntax,
             Expr::GateCallExpr(it) => &it.syntax,
             Expr::GPhaseCallExpr(it) => &it.syntax,
             Expr::HardwareQubit(it) => &it.syntax,
@@ -2874,7 +2874,7 @@ impl AstNode for Expr {
             Expr::IndexedIdentifier(it) => &it.syntax,
             Expr::Literal(it) => &it.syntax,
             Expr::TimingLiteral(it) => &it.syntax,
-            Expr::MeasureExpression(it) => &it.syntax,
+            Expr::MeasureExpr(it) => &it.syntax,
             Expr::ModifiedGateCallExpr(it) => &it.syntax,
             Expr::ParenExpr(it) => &it.syntax,
             Expr::PrefixExpr(it) => &it.syntax,
@@ -2995,32 +2995,32 @@ impl AstNode for Modifier {
         }
     }
 }
-impl From<SetExpression> for IndexKind {
-    fn from(node: SetExpression) -> IndexKind {
-        IndexKind::SetExpression(node)
+impl From<SetExpr> for IndexKind {
+    fn from(node: SetExpr) -> IndexKind {
+        IndexKind::SetExpr(node)
     }
 }
-impl From<ExpressionList> for IndexKind {
-    fn from(node: ExpressionList) -> IndexKind {
-        IndexKind::ExpressionList(node)
+impl From<ExprList> for IndexKind {
+    fn from(node: ExprList) -> IndexKind {
+        IndexKind::ExprList(node)
     }
 }
 impl AstNode for IndexKind {
     fn can_cast(kind: SyntaxKind) -> bool {
-        matches!(kind, SET_EXPRESSION | EXPRESSION_LIST)
+        matches!(kind, SET_EXPR | EXPR_LIST)
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
-            SET_EXPRESSION => IndexKind::SetExpression(SetExpression { syntax }),
-            EXPRESSION_LIST => IndexKind::ExpressionList(ExpressionList { syntax }),
+            SET_EXPR => IndexKind::SetExpr(SetExpr { syntax }),
+            EXPR_LIST => IndexKind::ExprList(ExprList { syntax }),
             _ => return None,
         };
         Some(res)
     }
     fn syntax(&self) -> &SyntaxNode {
         match self {
-            IndexKind::SetExpression(it) => &it.syntax,
-            IndexKind::ExpressionList(it) => &it.syntax,
+            IndexKind::SetExpr(it) => &it.syntax,
+            IndexKind::ExprList(it) => &it.syntax,
         }
     }
 }
@@ -3313,7 +3313,7 @@ impl std::fmt::Display for BlockExpr {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for ExpressionList {
+impl std::fmt::Display for ExprList {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -3408,7 +3408,7 @@ impl std::fmt::Display for CallExpr {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for CastExpression {
+impl std::fmt::Display for CastExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -3453,7 +3453,7 @@ impl std::fmt::Display for TimingLiteral {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for MeasureExpression {
+impl std::fmt::Display for MeasureExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -3523,7 +3523,7 @@ impl std::fmt::Display for ForIterable {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for SetExpression {
+impl std::fmt::Display for SetExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

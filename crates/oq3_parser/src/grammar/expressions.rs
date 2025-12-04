@@ -618,7 +618,7 @@ pub(crate) fn set_expression(p: &mut Parser<'_>) {
     p.bump(T!['{']);
     params::expression_list(p);
     p.expect(T!['}']);
-    m.complete(p, SET_EXPRESSION);
+    m.complete(p, SET_EXPR);
 }
 
 pub(crate) fn index_operator(p: &mut Parser<'_>) {
@@ -654,6 +654,6 @@ pub(crate) fn call_arg_list(p: &mut Parser<'_>) {
         |p: &mut Parser<'_>| expr(p).is_some(),
     );
     p.expect(ket);
-    m1.complete(p, EXPRESSION_LIST);
+    m1.complete(p, EXPR_LIST);
     m.complete(p, ARG_LIST);
 }

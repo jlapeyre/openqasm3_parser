@@ -44,7 +44,7 @@ IDENTIFIER@52..53: x
 QUBIT_LIST@54..56: $0
 HARDWARE_QUBIT@54..56: $0
 IF_STMT@60..91: if (int[8] myvar = 1) { x $0; }
-CAST_EXPRESSION@64..81: int[8] myvar = 1)
+CAST_EXPR@64..81: int[8] myvar = 1)
 SCALAR_TYPE@64..70: int[8]
 DESIGNATOR@67..70: [8]
 LITERAL@68..69: 8

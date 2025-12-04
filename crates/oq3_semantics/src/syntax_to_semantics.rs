@@ -320,11 +320,11 @@ fn stmt_to_asg_stmt(stmt: synast::Stmt, context: &mut Context) -> Option<asg::St
             let loop_var = for_stmt.loop_var().unwrap();
             let ty = scalar_type_to_type(&for_stmt.scalar_type().unwrap(), false, context);
             let iterable_ast = for_stmt.for_iterable().unwrap();
-            let iterable = if let Some(set_expression) = iterable_ast.set_expression() {
-                asg::ForIterable::SetExpression(set_expression_to_asg_type(set_expression, context))
-            } else if let Some(range_expression) = iterable_ast.range_expr() {
-                asg::ForIterable::RangeExpression(range_expression_to_asg_type(
-                    range_expression,
+            let iterable = if let Some(set_expr) = iterable_ast.set_expr() {
+                asg::ForIterable::SetExpression(set_expr_to_asg_type(set_expr, context))
+            } else if let Some(range_expr) = iterable_ast.range_expr() {
+                asg::ForIterable::RangeExpression(range_expr_to_asg_type(
+                    range_expr,
                     context,
                 ))
             } else if let Some(expression) = iterable_ast.for_iterable_expr() {
@@ -346,7 +346,7 @@ fn stmt_to_asg_stmt(stmt: synast::Stmt, context: &mut Context) -> Option<asg::St
         synast::Stmt::SwitchCaseStmt(switch_case_stmt) => {
             let control = expr_to_asg_texpr(switch_case_stmt.control(), context);
             let case_exprs = switch_case_stmt.case_exprs().map(|case_expr| {
-                let int_exprs = expression_list_to_asg_texpr(case_expr.expression_list().unwrap(), context);
+                let int_exprs = expr_list_to_asg_texpr(case_expr.expr_list().unwrap(), context);
                 with_scope!(context,  ScopeType::Local,
                             let statements = block_expr_to_asg_stmt_list(case_expr.block_expr().unwrap(), context);
                 );
@@ -793,7 +793,7 @@ fn expr_to_asg_texpr(
 
         // Range expressions are not allowed everywhere. Maybe remove from expr tree
         synast::Expr::RangeExpr(range_expr) => {
-            Some(range_expression_to_asg_type(range_expr, context).to_texpr())
+            Some(range_expr_to_asg_type(range_expr, context).to_texpr())
         }
 
         synast::Expr::IndexExpr(index_expr) => {
@@ -808,7 +808,7 @@ fn expr_to_asg_texpr(
             Some(indexed_identifier.to_texpr())
         }
 
-        synast::Expr::MeasureExpression(ref measure_expr) => {
+        synast::Expr::MeasureExpr(ref measure_expr) => {
             let gate_operand = measure_expr.gate_operand().unwrap(); // FIXME: check this
             let gate_operand_asg = gate_operand_to_asg_texpr(gate_operand, context);
             Some(asg::MeasureExpression::new(gate_operand_asg).to_texpr())
@@ -822,7 +822,7 @@ fn expr_to_asg_texpr(
             Some(asg::ReturnExpression::new(expr_asg).to_texpr())
         }
 
-        synast::Expr::CastExpression(cast) => {
+        synast::Expr::CastExpr(cast) => {
             let typ = scalar_type_to_type(&cast.scalar_type().unwrap(), true, context);
             let expr = expr_to_asg_texpr(cast.expr(), context);
             Some(asg::Cast::new(expr.unwrap(), typ).to_texpr())
@@ -843,17 +843,17 @@ fn expr_to_asg_texpr(
     }
 }
 
-fn set_expression_to_asg_type(
-    set_expression: synast::SetExpression,
+fn set_expr_to_asg_type(
+    set_expr: synast::SetExpr,
     context: &mut Context,
 ) -> asg::SetExpression {
-    asg::SetExpression::new(expression_list_to_asg_texpr(
-        set_expression.expression_list().unwrap(),
+    asg::SetExpression::new(expr_list_to_asg_texpr(
+        set_expr.expr_list().unwrap(),
         context,
     ))
 }
 
-fn range_expression_to_asg_type(
+fn range_expr_to_asg_type(
     range_expr: synast::RangeExpr,
     context: &mut Context,
 ) -> asg::RangeExpression {
@@ -872,7 +872,7 @@ fn gate_call_expr_to_asg_stmt(
     let gate_operands: Vec<_> = qubit_list_to_asg_texpr(gate_call_expr.qubit_list(), context);
     let param_list = gate_call_expr
         .arg_list()
-        .map(|ex| expression_list_to_asg_texpr(ex.expression_list().unwrap(), context));
+        .map(|ex| expr_list_to_asg_texpr(ex.expr_list().unwrap(), context));
     let num_params = match param_list {
         Some(ref params) => params.len(),
         None => 0,
@@ -924,7 +924,7 @@ fn gate_call_expr_to_asg_stmt(
 fn call_expr_to_asg_texpr(call_expr: synast::CallExpr, context: &mut Context) -> asg::TExpr {
     let param_list = call_expr
         .arg_list()
-        .map(|ex| expression_list_to_asg_texpr(ex.expression_list().unwrap(), context));
+        .map(|ex| expr_list_to_asg_texpr(ex.expr_list().unwrap(), context));
     let subroutine_id = call_expr.identifier();
     let subroutine_name = call_expr.identifier().unwrap().string();
     let (symbol_result, call_type) = context
@@ -974,7 +974,7 @@ fn gate_operand_to_asg_texpr(
     }
 }
 
-fn get_ast_designator_expression(arg: Option<&synast::Designator>) -> Option<synast::Expr> {
+fn get_ast_designator_expr(arg: Option<&synast::Designator>) -> Option<synast::Expr> {
     arg.and_then(|desg| desg.expr())
     // NOTE: Other uses of this pattern above have certain error checking,
     // but because it was not standardized, it is not included
@@ -986,21 +986,21 @@ fn index_operator_to_asg_type(
     context: &mut Context,
 ) -> asg::IndexOperator {
     match index_op.index_kind().unwrap() {
-        synast::IndexKind::SetExpression(set_expression) => {
-            asg::IndexOperator::SetExpression(set_expression_to_asg_type(set_expression, context))
+        synast::IndexKind::SetExpr(set_expr) => {
+            asg::IndexOperator::SetExpression(set_expr_to_asg_type(set_expr, context))
         }
 
-        synast::IndexKind::ExpressionList(expression_list) => asg::IndexOperator::ExpressionList(
-            expression_list_to_asg_type(expression_list, context),
+        synast::IndexKind::ExprList(expr_list) => asg::IndexOperator::ExpressionList(
+            expr_list_to_asg_type(expr_list, context),
         ),
     }
 }
 
-fn expression_list_to_asg_type(
-    expression_list: synast::ExpressionList,
+fn expr_list_to_asg_type(
+    expr_list: synast::ExprList,
     context: &mut Context,
 ) -> asg::ExpressionList {
-    asg::ExpressionList::new(expression_list_to_asg_texpr(expression_list, context))
+    asg::ExpressionList::new(expr_list_to_asg_texpr(expr_list, context))
 }
 
 fn qubit_list_to_asg_texpr(
@@ -1018,11 +1018,11 @@ fn qubit_list_to_asg_texpr(
 
 // Return a Vec of TExpr.  There is no reason to return an iterator, because if it were an
 // iterator, then at every call site this would be collected immediately.
-fn expression_list_to_asg_texpr(
-    expression_list: synast::ExpressionList,
+fn expr_list_to_asg_texpr(
+    expr_list: synast::ExprList,
     context: &mut Context,
 ) -> Vec<asg::TExpr> {
-    expression_list
+    expr_list
         .exprs()
         .filter_map(|x| expr_to_asg_texpr(Some(x), context))
         .collect()
@@ -1182,7 +1182,7 @@ fn designator_to_asg(
     context: &mut Context,
 ) -> Option<u32> {
     //  Get the width of the type.
-    match get_ast_designator_expression(designator) {
+    match get_ast_designator_expr(designator) {
         Some(synast::Expr::Literal(ref literal)) => {
             match literal.kind() {
                 synast::LiteralKind::IntNumber(int_num) => Some(int_num.value().unwrap() as u32),

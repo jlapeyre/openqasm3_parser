@@ -38,7 +38,7 @@
 // in expr_ext.rs.
 
 // Compare with qasm3Parser.g4
-// qasm3Parser.g4 has expressions such as rangeExpression that are:
+// qasm3Parser.g4 has expressions such as rangeExpr that are:
 // > Special-case expressions that are only valid in certain contexts.  These are
 // > not in the expression tree, but can contain elements that are within it.
 // Here, we *can* include these in the the expression tree (in the enum) because
@@ -111,7 +111,7 @@ SwitchCaseStmt =
 
 // Not in `Expr` tree
 CaseExpr =
-    'case' ExpressionList BlockExpr
+    'case' ExprList BlockExpr
 
 BreakStmt =
   'break' ';'
@@ -189,7 +189,7 @@ Gate =
 ParamList =
   '(' (Param (',' Param)* ','?)? ')'
 
-ArrayRefType = ('readonly' | 'mutable') 'array' '[' ScalarType ',' (ExpressionList | DimExpr) ']'
+ArrayRefType = ('readonly' | 'mutable') 'array' '[' ScalarType ',' (ExprList | DimExpr) ']'
 
 ParamType =
    (ScalarType | ArrayRefType)
@@ -229,7 +229,7 @@ Expr =
 | BlockExpr
 | BoxExpr
 | CallExpr
-| CastExpression
+| CastExpr
 | GateCallExpr
 | GPhaseCallExpr
 | HardwareQubit
@@ -238,7 +238,7 @@ Expr =
 | IndexedIdentifier
 | Literal
 | TimingLiteral
-| MeasureExpression
+| MeasureExpr
 | ModifiedGateCallExpr
 | ParenExpr
 | PrefixExpr
@@ -287,7 +287,7 @@ BinExpr =
 ParenExpr =
   '(' Expr ')'
 
-// FIXME: replace part inside with ExpressionList
+// FIXME: replace part inside with ExprList
 ArrayExpr =
   '[' (
     (Expr (',' Expr)* ','?)?
@@ -298,16 +298,16 @@ IndexExpr =
   Expr IndexOperator
 
 // Note: I don't know if the modifier '?' is used at all. Not in methods on `struct ArgList`.
-// FIXME: use ExpressionList
+// FIXME: use ExprList
 ArgList =
-   '(' ExpressionList? ')'
+   '(' ExprList? ')'
 
 // Gate arg list has different reqs from subroutine call arg list
 // But too hard to backtrack, so we don't make the distinction
 // GateArgList =
 //   Expr (',' Expr)* ','?
 
-CastExpression =
+CastExpr =
   (ScalarType | ArrayType) '(' Expr ')'
 
 GPhaseCallExpr =
@@ -355,7 +355,7 @@ ForStmt =
 // Recall, the label prevents code generation from implementing this alternation
 // as an `enum`. Leaving out the label would cause an error during codegen.
 ForIterable =
-  SetExpression | RangeExpr | for_iterable_expr:Expr
+  SetExpr | RangeExpr | for_iterable_expr:Expr
 
 WhileStmt =
   'while' '(' condition:Expr ')'
@@ -400,9 +400,9 @@ QubitType =
    'qubit' Designator?
 
 ArrayType =
-   'array' '[' ScalarType ',' ExpressionList ']'
+   'array' '[' ScalarType ',' ExprList ']'
 
-ExpressionList =
+ExprList =
    Expr (',' Expr)* ','?
 
 ReturnSignature =
@@ -413,30 +413,30 @@ ReturnSignature =
 AliasDeclarationStmt =
     'let' Name '=' Expr ';'
 
-MeasureExpression =
+MeasureExpr =
     'measure' GateOperand
 
 // We keep Identifier and IndexedIdentifier separate
 GateOperand =
   Identifier | IndexedIdentifier | HardwareQubit
 
-SetExpression =
-    '{' ExpressionList '}'
+SetExpr =
+    '{' ExprList '}'
 
 // But, probably better to make ExprRange an expression and do this:
 IndexOperator =
   '[' IndexKind ']'
 
 // We do this just to get an enum from codegen.
-// codgen is not smart enough (and lacks info) to handle '[' SetExpression | ExpressionList ']'
+// codgen is not smart enough (and lacks info) to handle '[' SetExpr | ExprList ']'
 IndexKind =
-  SetExpression | ExpressionList
+  SetExpr | ExprList
 
 IndexedIdentifier =
     Name IndexOperator*
 
 ArrayLiteral =
-  '{' ExpressionList '}'
+  '{' ExprList '}'
 
 // // FIXME
 HardwareQubit =

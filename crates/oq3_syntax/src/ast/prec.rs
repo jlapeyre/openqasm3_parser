@@ -78,7 +78,7 @@ impl Expr {
             let next = match &innermost {
                 BinExpr(e) => e.lhs(),
                 CallExpr(e) => e.expr(),
-                CastExpression(e) => e.expr(),
+                CastExpr(e) => e.expr(),
                 IndexExpr(e) => e.expr(),
                 IndexedIdentifier(_) => break,
                 _ => break,
@@ -140,13 +140,13 @@ impl Expr {
                 }
             }
             ArrayLiteral(_) => (0, 0), // These need to be checked
-            MeasureExpression(_) => (0, 0),
+            MeasureExpr(_) => (0, 0),
             BoxExpr(_) | PrefixExpr(_) => (0, 27),
             GPhaseCallExpr(_)
             | GateCallExpr(_)
             | ModifiedGateCallExpr(_)
             | CallExpr(_)
-            | CastExpression(_)
+            | CastExpr(_)
             | IndexExpr(_)
             | IndexedIdentifier(_) => (29, 0),
             ArrayExpr(_) | Literal(_) | TimingLiteral(_) | ParenExpr(_) | Identifier(_)
@@ -200,14 +200,14 @@ impl Expr {
                 GPhaseCallExpr(_) => None,
                 GateCallExpr(_) => None,
                 ModifiedGateCallExpr(_) => None,
-                CastExpression(e) => e.l_paren_token(),
+                CastExpr(e) => e.l_paren_token(),
                 //                IndexExpr(e) => e.l_brack_token(),
                 // The bracket in IndexExpr is now absorbed in IndexOperator
                 IndexExpr(_e) => todo!(),
                 IndexedIdentifier(_e) => todo!(),
                 ReturnExpr(e) => e.return_token(),
                 ArrayLiteral(_) => todo!(),
-                MeasureExpression(_) => todo!(),
+                MeasureExpr(_) => todo!(),
                 DimExpr(_) | ArrayExpr(_) | Literal(_) | TimingLiteral(_) | ParenExpr(_)
                 | Identifier(_) | HardwareQubit(_) | BlockExpr(_) => None,
             };
@@ -229,7 +229,7 @@ impl Expr {
             | GPhaseCallExpr(_)
             | GateCallExpr(_)
             | ModifiedGateCallExpr(_)
-            | CastExpression(_)
+            | CastExpr(_)
             | IndexExpr(_)
             | IndexedIdentifier(_)
             | Literal(_)
@@ -246,7 +246,7 @@ impl Expr {
                 .map(|e| e.child_is_followed_by_a_block())
                 .unwrap_or(false),
             ArrayLiteral(_) => todo!(),
-            MeasureExpression(_) => todo!(),
+            MeasureExpr(_) => todo!(),
         }
     }
 }

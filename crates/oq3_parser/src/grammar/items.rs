@@ -303,7 +303,7 @@ pub(crate) fn _returns_bool_classical_declaration_stmt(p: &mut Parser<'_>, m: Ma
         p.expect(T!['(']);
         expressions::expr(p);
         p.expect(T![')']);
-        mexpr.complete(p, CAST_EXPRESSION);
+        mexpr.complete(p, CAST_EXPR);
         if p.at(SEMICOLON) {
             p.expect(SEMICOLON);
             m.complete(p, EXPR_STMT);

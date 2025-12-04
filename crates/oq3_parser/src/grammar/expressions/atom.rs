@@ -128,7 +128,7 @@ pub(crate) fn cast_expr(p: &mut Parser<'_>) -> CompletedMarker {
     p.expect(T!['(']);
     expr(p);
     p.expect(T![')']);
-    m.complete(p, CAST_EXPRESSION)
+    m.complete(p, CAST_EXPR)
 }
 
 fn gphase_call_expr(p: &mut Parser<'_>) -> CompletedMarker {
@@ -234,7 +234,7 @@ fn measure_expression(p: &mut Parser<'_>) -> CompletedMarker {
             p.error("expecting qubit(s) to measure");
         }
     }
-    m.complete(p, MEASURE_EXPRESSION)
+    m.complete(p, MEASURE_EXPR)
 }
 
 // FIXME: changed the kind to `NAME`

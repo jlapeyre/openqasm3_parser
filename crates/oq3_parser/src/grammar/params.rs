@@ -230,7 +230,7 @@ fn _param_list_openqasm(p: &mut Parser<'_>, flavor: DefFlavor) {
         GateQubits => PARAM_LIST,
         DefCalQubits => QUBIT_LIST,
         GateCallQubits => QUBIT_LIST,
-        ExpressionList | CaseValues => EXPRESSION_LIST,
+        ExpressionList | CaseValues => EXPR_LIST,
         DefParams | DefCalParams => TYPED_PARAM_LIST,
         GateParams => PARAM_LIST,
         TypeListFlavor => TYPE_LIST,
