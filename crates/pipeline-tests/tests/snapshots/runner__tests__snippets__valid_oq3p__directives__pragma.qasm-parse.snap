@@ -13,5 +13,5 @@ SOURCE_FILE@0..46:
 pragma (((9217#@%^^^*!@#$%^
 #pragma ))!~==}{
 
-PRAGMA_STATEMENT@1..28: pragma (((9217#@%^^^*!@#$%^
-PRAGMA_STATEMENT@29..45: #pragma ))!~==}{
+PRAGMA_STMT@1..28: pragma (((9217#@%^^^*!@#$%^
+PRAGMA_STMT@29..45: #pragma ))!~==}{

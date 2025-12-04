@@ -25,11 +25,11 @@ impl SourceFile {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct AliasDeclarationStatement {
+pub struct AliasDeclarationStmt {
     pub(crate) syntax: SyntaxNode,
 }
-impl ast::HasName for AliasDeclarationStatement {}
-impl AliasDeclarationStatement {
+impl ast::HasName for AliasDeclarationStmt {}
+impl AliasDeclarationStmt {
     pub fn let_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![let])
     }
@@ -44,10 +44,10 @@ impl AliasDeclarationStatement {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct AnnotationStatement {
+pub struct AnnotationStmt {
     pub(crate) syntax: SyntaxNode,
 }
-impl AnnotationStatement {}
+impl AnnotationStmt {}
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct AssignmentStmt {
     pub(crate) syntax: SyntaxNode,
@@ -106,11 +106,11 @@ impl Cal {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ClassicalDeclarationStatement {
+pub struct ClassicalDeclarationStmt {
     pub(crate) syntax: SyntaxNode,
 }
-impl ast::HasName for ClassicalDeclarationStatement {}
-impl ClassicalDeclarationStatement {
+impl ast::HasName for ClassicalDeclarationStmt {}
+impl ClassicalDeclarationStmt {
     pub fn const_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![const])
     }
@@ -345,11 +345,11 @@ impl Include {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct IODeclarationStatement {
+pub struct IODeclarationStmt {
     pub(crate) syntax: SyntaxNode,
 }
-impl ast::HasName for IODeclarationStatement {}
-impl IODeclarationStatement {
+impl ast::HasName for IODeclarationStmt {}
+impl IODeclarationStmt {
     pub fn input_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![input])
     }
@@ -401,10 +401,10 @@ impl Measure {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct OldStyleDeclarationStatement {
+pub struct OldStyleDeclarationStmt {
     pub(crate) syntax: SyntaxNode,
 }
-impl OldStyleDeclarationStatement {
+impl OldStyleDeclarationStmt {
     pub fn old_typed_param(&self) -> Option<OldTypedParam> {
         support::child(&self.syntax)
     }
@@ -413,20 +413,20 @@ impl OldStyleDeclarationStatement {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct PragmaStatement {
+pub struct PragmaStmt {
     pub(crate) syntax: SyntaxNode,
 }
-impl PragmaStatement {
+impl PragmaStmt {
     pub fn pragma_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![pragma])
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct QuantumDeclarationStatement {
+pub struct QuantumDeclarationStmt {
     pub(crate) syntax: SyntaxNode,
 }
-impl ast::HasName for QuantumDeclarationStatement {}
-impl QuantumDeclarationStatement {
+impl ast::HasName for QuantumDeclarationStmt {}
+impl QuantumDeclarationStmt {
     pub fn qubit_type(&self) -> Option<QubitType> {
         support::child(&self.syntax)
     }
@@ -1173,13 +1173,13 @@ impl QubitType {
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Stmt {
-    AliasDeclarationStatement(AliasDeclarationStatement),
-    AnnotationStatement(AnnotationStatement),
+    AliasDeclarationStmt(AliasDeclarationStmt),
+    AnnotationStmt(AnnotationStmt),
     AssignmentStmt(AssignmentStmt),
     Barrier(Barrier),
     BreakStmt(BreakStmt),
     Cal(Cal),
-    ClassicalDeclarationStatement(ClassicalDeclarationStatement),
+    ClassicalDeclarationStmt(ClassicalDeclarationStmt),
     ContinueStmt(ContinueStmt),
     Def(Def),
     DefCal(DefCal),
@@ -1192,12 +1192,12 @@ pub enum Stmt {
     Gate(Gate),
     IfStmt(IfStmt),
     Include(Include),
-    IODeclarationStatement(IODeclarationStatement),
+    IODeclarationStmt(IODeclarationStmt),
     LetStmt(LetStmt),
     Measure(Measure),
-    OldStyleDeclarationStatement(OldStyleDeclarationStatement),
-    PragmaStatement(PragmaStatement),
-    QuantumDeclarationStatement(QuantumDeclarationStatement),
+    OldStyleDeclarationStmt(OldStyleDeclarationStmt),
+    PragmaStmt(PragmaStmt),
+    QuantumDeclarationStmt(QuantumDeclarationStmt),
     Reset(Reset),
     SwitchCaseStmt(SwitchCaseStmt),
     VersionString(VersionString),
@@ -1296,9 +1296,9 @@ impl AstNode for SourceFile {
         &self.syntax
     }
 }
-impl AstNode for AliasDeclarationStatement {
+impl AstNode for AliasDeclarationStmt {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == ALIAS_DECLARATION_STATEMENT
+        kind == ALIAS_DECLARATION_STMT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -1311,9 +1311,9 @@ impl AstNode for AliasDeclarationStatement {
         &self.syntax
     }
 }
-impl AstNode for AnnotationStatement {
+impl AstNode for AnnotationStmt {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == ANNOTATION_STATEMENT
+        kind == ANNOTATION_STMT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -1386,9 +1386,9 @@ impl AstNode for Cal {
         &self.syntax
     }
 }
-impl AstNode for ClassicalDeclarationStatement {
+impl AstNode for ClassicalDeclarationStmt {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == CLASSICAL_DECLARATION_STATEMENT
+        kind == CLASSICAL_DECLARATION_STMT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -1581,9 +1581,9 @@ impl AstNode for Include {
         &self.syntax
     }
 }
-impl AstNode for IODeclarationStatement {
+impl AstNode for IODeclarationStmt {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == I_O_DECLARATION_STATEMENT
+        kind == I_O_DECLARATION_STMT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -1626,9 +1626,9 @@ impl AstNode for Measure {
         &self.syntax
     }
 }
-impl AstNode for OldStyleDeclarationStatement {
+impl AstNode for OldStyleDeclarationStmt {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == OLD_STYLE_DECLARATION_STATEMENT
+        kind == OLD_STYLE_DECLARATION_STMT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -1641,9 +1641,9 @@ impl AstNode for OldStyleDeclarationStatement {
         &self.syntax
     }
 }
-impl AstNode for PragmaStatement {
+impl AstNode for PragmaStmt {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == PRAGMA_STATEMENT
+        kind == PRAGMA_STMT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -1656,9 +1656,9 @@ impl AstNode for PragmaStatement {
         &self.syntax
     }
 }
-impl AstNode for QuantumDeclarationStatement {
+impl AstNode for QuantumDeclarationStmt {
     fn can_cast(kind: SyntaxKind) -> bool {
-        kind == QUANTUM_DECLARATION_STATEMENT
+        kind == QUANTUM_DECLARATION_STMT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -2436,14 +2436,14 @@ impl AstNode for QubitType {
         &self.syntax
     }
 }
-impl From<AliasDeclarationStatement> for Stmt {
-    fn from(node: AliasDeclarationStatement) -> Stmt {
-        Stmt::AliasDeclarationStatement(node)
+impl From<AliasDeclarationStmt> for Stmt {
+    fn from(node: AliasDeclarationStmt) -> Stmt {
+        Stmt::AliasDeclarationStmt(node)
     }
 }
-impl From<AnnotationStatement> for Stmt {
-    fn from(node: AnnotationStatement) -> Stmt {
-        Stmt::AnnotationStatement(node)
+impl From<AnnotationStmt> for Stmt {
+    fn from(node: AnnotationStmt) -> Stmt {
+        Stmt::AnnotationStmt(node)
     }
 }
 impl From<AssignmentStmt> for Stmt {
@@ -2466,9 +2466,9 @@ impl From<Cal> for Stmt {
         Stmt::Cal(node)
     }
 }
-impl From<ClassicalDeclarationStatement> for Stmt {
-    fn from(node: ClassicalDeclarationStatement) -> Stmt {
-        Stmt::ClassicalDeclarationStatement(node)
+impl From<ClassicalDeclarationStmt> for Stmt {
+    fn from(node: ClassicalDeclarationStmt) -> Stmt {
+        Stmt::ClassicalDeclarationStmt(node)
     }
 }
 impl From<ContinueStmt> for Stmt {
@@ -2531,9 +2531,9 @@ impl From<Include> for Stmt {
         Stmt::Include(node)
     }
 }
-impl From<IODeclarationStatement> for Stmt {
-    fn from(node: IODeclarationStatement) -> Stmt {
-        Stmt::IODeclarationStatement(node)
+impl From<IODeclarationStmt> for Stmt {
+    fn from(node: IODeclarationStmt) -> Stmt {
+        Stmt::IODeclarationStmt(node)
     }
 }
 impl From<LetStmt> for Stmt {
@@ -2546,19 +2546,19 @@ impl From<Measure> for Stmt {
         Stmt::Measure(node)
     }
 }
-impl From<OldStyleDeclarationStatement> for Stmt {
-    fn from(node: OldStyleDeclarationStatement) -> Stmt {
-        Stmt::OldStyleDeclarationStatement(node)
+impl From<OldStyleDeclarationStmt> for Stmt {
+    fn from(node: OldStyleDeclarationStmt) -> Stmt {
+        Stmt::OldStyleDeclarationStmt(node)
     }
 }
-impl From<PragmaStatement> for Stmt {
-    fn from(node: PragmaStatement) -> Stmt {
-        Stmt::PragmaStatement(node)
+impl From<PragmaStmt> for Stmt {
+    fn from(node: PragmaStmt) -> Stmt {
+        Stmt::PragmaStmt(node)
     }
 }
-impl From<QuantumDeclarationStatement> for Stmt {
-    fn from(node: QuantumDeclarationStatement) -> Stmt {
-        Stmt::QuantumDeclarationStatement(node)
+impl From<QuantumDeclarationStmt> for Stmt {
+    fn from(node: QuantumDeclarationStmt) -> Stmt {
+        Stmt::QuantumDeclarationStmt(node)
     }
 }
 impl From<Reset> for Stmt {
@@ -2585,13 +2585,13 @@ impl AstNode for Stmt {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind,
-            ALIAS_DECLARATION_STATEMENT
-                | ANNOTATION_STATEMENT
+            ALIAS_DECLARATION_STMT
+                | ANNOTATION_STMT
                 | ASSIGNMENT_STMT
                 | BARRIER
                 | BREAK_STMT
                 | CAL
-                | CLASSICAL_DECLARATION_STATEMENT
+                | CLASSICAL_DECLARATION_STMT
                 | CONTINUE_STMT
                 | DEF
                 | DEF_CAL
@@ -2604,12 +2604,12 @@ impl AstNode for Stmt {
                 | GATE
                 | IF_STMT
                 | INCLUDE
-                | I_O_DECLARATION_STATEMENT
+                | I_O_DECLARATION_STMT
                 | LET_STMT
                 | MEASURE
-                | OLD_STYLE_DECLARATION_STATEMENT
-                | PRAGMA_STATEMENT
-                | QUANTUM_DECLARATION_STATEMENT
+                | OLD_STYLE_DECLARATION_STMT
+                | PRAGMA_STMT
+                | QUANTUM_DECLARATION_STMT
                 | RESET
                 | SWITCH_CASE_STMT
                 | VERSION_STRING
@@ -2618,16 +2618,14 @@ impl AstNode for Stmt {
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         let res = match syntax.kind() {
-            ALIAS_DECLARATION_STATEMENT => {
-                Stmt::AliasDeclarationStatement(AliasDeclarationStatement { syntax })
-            }
-            ANNOTATION_STATEMENT => Stmt::AnnotationStatement(AnnotationStatement { syntax }),
+            ALIAS_DECLARATION_STMT => Stmt::AliasDeclarationStmt(AliasDeclarationStmt { syntax }),
+            ANNOTATION_STMT => Stmt::AnnotationStmt(AnnotationStmt { syntax }),
             ASSIGNMENT_STMT => Stmt::AssignmentStmt(AssignmentStmt { syntax }),
             BARRIER => Stmt::Barrier(Barrier { syntax }),
             BREAK_STMT => Stmt::BreakStmt(BreakStmt { syntax }),
             CAL => Stmt::Cal(Cal { syntax }),
-            CLASSICAL_DECLARATION_STATEMENT => {
-                Stmt::ClassicalDeclarationStatement(ClassicalDeclarationStatement { syntax })
+            CLASSICAL_DECLARATION_STMT => {
+                Stmt::ClassicalDeclarationStmt(ClassicalDeclarationStmt { syntax })
             }
             CONTINUE_STMT => Stmt::ContinueStmt(ContinueStmt { syntax }),
             DEF => Stmt::Def(Def { syntax }),
@@ -2641,17 +2639,15 @@ impl AstNode for Stmt {
             GATE => Stmt::Gate(Gate { syntax }),
             IF_STMT => Stmt::IfStmt(IfStmt { syntax }),
             INCLUDE => Stmt::Include(Include { syntax }),
-            I_O_DECLARATION_STATEMENT => {
-                Stmt::IODeclarationStatement(IODeclarationStatement { syntax })
-            }
+            I_O_DECLARATION_STMT => Stmt::IODeclarationStmt(IODeclarationStmt { syntax }),
             LET_STMT => Stmt::LetStmt(LetStmt { syntax }),
             MEASURE => Stmt::Measure(Measure { syntax }),
-            OLD_STYLE_DECLARATION_STATEMENT => {
-                Stmt::OldStyleDeclarationStatement(OldStyleDeclarationStatement { syntax })
+            OLD_STYLE_DECLARATION_STMT => {
+                Stmt::OldStyleDeclarationStmt(OldStyleDeclarationStmt { syntax })
             }
-            PRAGMA_STATEMENT => Stmt::PragmaStatement(PragmaStatement { syntax }),
-            QUANTUM_DECLARATION_STATEMENT => {
-                Stmt::QuantumDeclarationStatement(QuantumDeclarationStatement { syntax })
+            PRAGMA_STMT => Stmt::PragmaStmt(PragmaStmt { syntax }),
+            QUANTUM_DECLARATION_STMT => {
+                Stmt::QuantumDeclarationStmt(QuantumDeclarationStmt { syntax })
             }
             RESET => Stmt::Reset(Reset { syntax }),
             SWITCH_CASE_STMT => Stmt::SwitchCaseStmt(SwitchCaseStmt { syntax }),
@@ -2663,13 +2659,13 @@ impl AstNode for Stmt {
     }
     fn syntax(&self) -> &SyntaxNode {
         match self {
-            Stmt::AliasDeclarationStatement(it) => &it.syntax,
-            Stmt::AnnotationStatement(it) => &it.syntax,
+            Stmt::AliasDeclarationStmt(it) => &it.syntax,
+            Stmt::AnnotationStmt(it) => &it.syntax,
             Stmt::AssignmentStmt(it) => &it.syntax,
             Stmt::Barrier(it) => &it.syntax,
             Stmt::BreakStmt(it) => &it.syntax,
             Stmt::Cal(it) => &it.syntax,
-            Stmt::ClassicalDeclarationStatement(it) => &it.syntax,
+            Stmt::ClassicalDeclarationStmt(it) => &it.syntax,
             Stmt::ContinueStmt(it) => &it.syntax,
             Stmt::Def(it) => &it.syntax,
             Stmt::DefCal(it) => &it.syntax,
@@ -2682,12 +2678,12 @@ impl AstNode for Stmt {
             Stmt::Gate(it) => &it.syntax,
             Stmt::IfStmt(it) => &it.syntax,
             Stmt::Include(it) => &it.syntax,
-            Stmt::IODeclarationStatement(it) => &it.syntax,
+            Stmt::IODeclarationStmt(it) => &it.syntax,
             Stmt::LetStmt(it) => &it.syntax,
             Stmt::Measure(it) => &it.syntax,
-            Stmt::OldStyleDeclarationStatement(it) => &it.syntax,
-            Stmt::PragmaStatement(it) => &it.syntax,
-            Stmt::QuantumDeclarationStatement(it) => &it.syntax,
+            Stmt::OldStyleDeclarationStmt(it) => &it.syntax,
+            Stmt::PragmaStmt(it) => &it.syntax,
+            Stmt::QuantumDeclarationStmt(it) => &it.syntax,
             Stmt::Reset(it) => &it.syntax,
             Stmt::SwitchCaseStmt(it) => &it.syntax,
             Stmt::VersionString(it) => &it.syntax,
@@ -3088,15 +3084,15 @@ impl AstNode for AnyHasName {
     fn can_cast(kind: SyntaxKind) -> bool {
         matches!(
             kind,
-            ALIAS_DECLARATION_STATEMENT
-                | CLASSICAL_DECLARATION_STATEMENT
+            ALIAS_DECLARATION_STMT
+                | CLASSICAL_DECLARATION_STMT
                 | DEF
                 | DEF_CAL
                 | EXTERN_STMT
                 | GATE
-                | I_O_DECLARATION_STATEMENT
+                | I_O_DECLARATION_STMT
                 | LET_STMT
-                | QUANTUM_DECLARATION_STATEMENT
+                | QUANTUM_DECLARATION_STMT
                 | PARAM
                 | TYPED_PARAM
                 | OLD_TYPED_PARAM
@@ -3157,12 +3153,12 @@ impl std::fmt::Display for SourceFile {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for AliasDeclarationStatement {
+impl std::fmt::Display for AliasDeclarationStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for AnnotationStatement {
+impl std::fmt::Display for AnnotationStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -3187,7 +3183,7 @@ impl std::fmt::Display for Cal {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for ClassicalDeclarationStatement {
+impl std::fmt::Display for ClassicalDeclarationStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -3252,7 +3248,7 @@ impl std::fmt::Display for Include {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for IODeclarationStatement {
+impl std::fmt::Display for IODeclarationStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -3267,17 +3263,17 @@ impl std::fmt::Display for Measure {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for OldStyleDeclarationStatement {
+impl std::fmt::Display for OldStyleDeclarationStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for PragmaStatement {
+impl std::fmt::Display for PragmaStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
-impl std::fmt::Display for QuantumDeclarationStatement {
+impl std::fmt::Display for QuantumDeclarationStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

@@ -59,9 +59,7 @@ fn print_stmt(stmt: ast::Stmt) {
         ast::Stmt::Cal(cal) => print_cal(cal),
         ast::Stmt::VersionString(version_string) => print_version_string(version_string),
         ast::Stmt::Include(include) => print_include(include),
-        ast::Stmt::ClassicalDeclarationStatement(type_decl) => {
-            print_type_declaration_statement(type_decl)
-        }
+        ast::Stmt::ClassicalDeclarationStmt(type_decl) => print_type_declaration_stmt(type_decl),
         _ => {
             println!("unhandled stmt: {stmt:?}")
         }
@@ -121,7 +119,7 @@ fn test_gate_def(gate: ast::Gate, (name, qubit_list): (&str, &str)) -> bool {
 }
 
 #[allow(dead_code)]
-fn print_type_declaration_statement(type_decl: ast::ClassicalDeclarationStatement) {
+fn print_type_declaration_stmt(type_decl: ast::ClassicalDeclarationStmt) {
     println!("Type declaration");
     print!(" scalar_type ");
     let scalar_type = type_decl.scalar_type().unwrap();

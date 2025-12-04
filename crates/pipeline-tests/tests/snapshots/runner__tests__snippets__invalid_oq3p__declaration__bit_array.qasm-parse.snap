@@ -12,7 +12,7 @@ errors: 1
 SOURCE_FILE@0..21: 
 array[bit[8], 2] x;
 
-CLASSICAL_DECLARATION_STATEMENT@1..20: array[bit[8], 2] x;
+CLASSICAL_DECLARATION_STMT@1..20: array[bit[8], 2] x;
 ARRAY_TYPE@1..17: array[bit[8], 2]
 SCALAR_TYPE@7..13: bit[8]
 DESIGNATOR@10..13: [8]

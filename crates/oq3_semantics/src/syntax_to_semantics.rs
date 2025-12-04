@@ -361,19 +361,19 @@ fn stmt_to_asg_stmt(stmt: synast::Stmt, context: &mut Context) -> Option<asg::St
             )
         }
 
-        synast::Stmt::ClassicalDeclarationStatement(type_decl) => Some(
+        synast::Stmt::ClassicalDeclarationStmt(type_decl) => Some(
             classical_declaration_statement_to_asg_stmt(&type_decl, context),
         ),
 
-        oq3_syntax::ast::Stmt::OldStyleDeclarationStatement(n) => {
+        oq3_syntax::ast::Stmt::OldStyleDeclarationStmt(n) => {
             not_impl!(context, n)
         }
 
-        synast::Stmt::IODeclarationStatement(type_decl) => {
+        synast::Stmt::IODeclarationStmt(type_decl) => {
             Some(io_declaration_statement_to_asg_stmt(&type_decl, context))
         }
 
-        synast::Stmt::QuantumDeclarationStatement(q_decl) => {
+        synast::Stmt::QuantumDeclarationStmt(q_decl) => {
             if !context.symbol_table().in_global_scope() {
                 context.insert_error(NotInGlobalScopeError, &q_decl);
             }
@@ -543,21 +543,19 @@ fn stmt_to_asg_stmt(stmt: synast::Stmt, context: &mut Context) -> Option<asg::St
             None
         }
 
-        synast::Stmt::PragmaStatement(pragma) => {
-            Some(asg::Pragma::new(pragma.pragma_text()).to_stmt())
-        }
+        synast::Stmt::PragmaStmt(pragma) => Some(asg::Pragma::new(pragma.pragma_text()).to_stmt()),
 
         // Annotations are accumulated and attached to the following statement.
         // So we return None here.
         // It would be more convenient to return the annotation and handle
         // attaching, clearing etc. in one spot. But we have to return a Stmt.
         // And asg::Annotation is not a Stmt.
-        synast::Stmt::AnnotationStatement(annotation) => {
+        synast::Stmt::AnnotationStmt(annotation) => {
             context.push_annotation(asg::Annotation::new(annotation.annotation_text()));
             None
         }
 
-        synast::Stmt::AliasDeclarationStatement(alias_stmt) => {
+        synast::Stmt::AliasDeclarationStmt(alias_stmt) => {
             let name_str = alias_stmt.name().unwrap().string();
             let rhs = expr_to_asg_texpr(alias_stmt.expr(), context).unwrap();
             // Bind the name to the RHS, giving it the same type as the RHS.
@@ -1230,7 +1228,7 @@ fn can_cast_literal(lhs_type: &Type, init_type: &Type, literal: &asg::Literal) -
 }
 
 fn classical_declaration_statement_to_asg_stmt(
-    type_decl: &synast::ClassicalDeclarationStatement,
+    type_decl: &synast::ClassicalDeclarationStmt,
     context: &mut Context,
 ) -> asg::Stmt {
     let lhs_type = if type_decl.array_type().is_some() {
@@ -1304,7 +1302,7 @@ fn declare_classical_helper(
 }
 
 fn io_declaration_statement_to_asg_stmt(
-    type_decl: &synast::IODeclarationStatement,
+    type_decl: &synast::IODeclarationStmt,
     context: &mut Context,
 ) -> asg::Stmt {
     if type_decl.array_type().is_some() {
@@ -1321,7 +1319,6 @@ fn io_declaration_statement_to_asg_stmt(
         asg::OutputDeclaration::new(symbol_id).to_stmt()
     }
 }
-
 
 fn assignment_stmt_to_asg_stmt(
     assignment_stmt: &synast::AssignmentStmt,
@@ -1373,7 +1370,7 @@ fn assignment_stmt_to_asg_stmt(
             if is_mutating_const {
                 context.insert_error(MutateConstError, assignment_stmt);
             }
-            return stmt_asg;
+            stmt_asg // return
         }
 
         synast::AssignmentLhs::IndexedIdentifier(indexed_identifier_ast) => {

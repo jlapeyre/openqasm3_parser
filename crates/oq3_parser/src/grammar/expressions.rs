@@ -83,13 +83,13 @@ pub(crate) fn stmt(p: &mut Parser<'_>) {
     };
     if p.at(PRAGMA) {
         p.bump_any();
-        m.complete(p, PRAGMA_STATEMENT);
+        m.complete(p, PRAGMA_STMT);
         return;
     }
     if p.at(ANNOTATION) {
         p.bump_any();
         // Note this is a single annotation, not an annotated statement.
-        m.complete(p, ANNOTATION_STATEMENT);
+        m.complete(p, ANNOTATION_STMT);
         return;
     }
 
@@ -173,7 +173,7 @@ pub fn q_or_c_reg_param(p: &mut Parser<'_>) {
 fn q_or_c_reg_declaration(p: &mut Parser<'_>, m: Marker) {
     q_or_c_reg_param(p);
     p.expect(T![;]);
-    m.complete(p, OLD_STYLE_DECLARATION_STATEMENT);
+    m.complete(p, OLD_STYLE_DECLARATION_STMT);
 }
 
 // Careful, this reads til } *or* EOF. And this may be called without having read a

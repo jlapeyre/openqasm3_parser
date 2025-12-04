@@ -17,7 +17,7 @@ negctrl(3) @ g q;
 pow(-1./2.) @ g q;
 inv @ g q;
 
-QUANTUM_DECLARATION_STATEMENT@1..9: qubit q;
+QUANTUM_DECLARATION_STMT@1..9: qubit q;
 QUBIT_TYPE@1..6: qubit
 NAME@7..8: q
 GATE@10..21: gate g q {}

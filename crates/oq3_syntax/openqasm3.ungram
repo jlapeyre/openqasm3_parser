@@ -63,13 +63,13 @@ SourceFile =
 // FIXME: Stmt vs Statement ?
 Stmt =
  ';'
-| AliasDeclarationStatement
-| AnnotationStatement
+| AliasDeclarationStmt
+| AnnotationStmt
 | AssignmentStmt
 | Barrier
 | BreakStmt
 | Cal
-| ClassicalDeclarationStatement
+| ClassicalDeclarationStmt
 | ContinueStmt
 | Def
 | DefCal
@@ -82,23 +82,23 @@ Stmt =
 | Gate
 | IfStmt
 | Include
-| IODeclarationStatement
+| IODeclarationStmt
 | LetStmt
 | Measure
-| OldStyleDeclarationStatement
-| PragmaStatement
-| QuantumDeclarationStatement
+| OldStyleDeclarationStmt
+| PragmaStmt
+| QuantumDeclarationStmt
 | Reset
 | SwitchCaseStmt
 | VersionString
 | WhileStmt
 
 // "thelabel" is in the list of manually implemented elements.
-AnnotationStatement =
+AnnotationStmt =
     thelabel:'fakekw'
 
 // Like 'ident' the remainder is manually coded
-PragmaStatement =
+PragmaStmt =
    'pragma'
 
 // Using '#dim' is a problem. The code gen at some places does not like it.
@@ -381,7 +381,7 @@ BoxExpr =
 //*************************//
 
 // FIXME: move optional `const` here. This is currently
-// in ClassicalDeclarationStatement.
+// in ClassicalDeclarationStmt.
 ScalarType =
     'bit' Designator?
     | 'int' Designator?
@@ -410,7 +410,7 @@ ReturnSignature =
 
 // Primitive declaration statements.
 
-AliasDeclarationStatement =
+AliasDeclarationStmt =
     'let' Name '=' Expr ';'
 
 MeasureExpression =
@@ -442,16 +442,16 @@ ArrayLiteral =
 HardwareQubit =
   Name
 
-ClassicalDeclarationStatement =
+ClassicalDeclarationStmt =
  'const'? (ScalarType | ArrayType) Name ('=' Expr)? ';'
 
-IODeclarationStatement =
+IODeclarationStmt =
     ('input' | 'output') (ScalarType | ArrayType) Name ';'
 
-OldStyleDeclarationStatement =
+OldStyleDeclarationStmt =
     OldTypedParam ';'
 
-QuantumDeclarationStatement =
+QuantumDeclarationStmt =
    QubitType (Name | HardwareQubit) ';'
 
 AssignmentLhs =

@@ -254,7 +254,7 @@ int x;
     assert!(parse.errors().is_empty());
     let mut stmts = parse.tree().statements();
     let decl = match stmts.next() {
-        Some(ast::Stmt::ClassicalDeclarationStatement(s)) => s,
+        Some(ast::Stmt::ClassicalDeclarationStmt(s)) => s,
         _ => unreachable!(),
     };
     let scalar_type = decl.scalar_type().unwrap();

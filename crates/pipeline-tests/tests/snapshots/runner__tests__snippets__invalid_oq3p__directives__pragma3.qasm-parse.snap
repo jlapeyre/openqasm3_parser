@@ -15,4 +15,4 @@ int pragma = 1;
 
 SCALAR_TYPE@39..42: int
 NAME@43..43: 
-PRAGMA_STATEMENT@43..54: pragma = 1;
+PRAGMA_STMT@43..54: pragma = 1;

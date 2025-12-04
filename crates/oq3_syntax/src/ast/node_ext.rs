@@ -253,7 +253,7 @@ impl ast::IfStmt {
     // }
 }
 
-impl ast::PragmaStatement {
+impl ast::PragmaStmt {
     fn text(&self) -> TokenText<'_> {
         text_of_first_token(self.syntax())
     }
@@ -269,7 +269,7 @@ impl ast::PragmaStatement {
     }
 }
 
-impl ast::AnnotationStatement {
+impl ast::AnnotationStmt {
     fn text(&self) -> TokenText<'_> {
         text_of_first_token(self.syntax())
     }

@@ -205,7 +205,7 @@ fn qubit_declaration_stmt(p: &mut Parser<'_>, m: Marker) {
         expressions::var_name(p);
     }
     p.expect(SEMICOLON);
-    m.complete(p, QUANTUM_DECLARATION_STATEMENT);
+    m.complete(p, QUANTUM_DECLARATION_STMT);
 }
 
 fn reset_stmt(p: &mut Parser<'_>, m: Marker) {
@@ -317,7 +317,7 @@ pub(crate) fn _returns_bool_classical_declaration_stmt(p: &mut Parser<'_>, m: Ma
     }
     expressions::var_name(p);
     if p.eat(T![;]) {
-        m.complete(p, CLASSICAL_DECLARATION_STATEMENT);
+        m.complete(p, CLASSICAL_DECLARATION_STMT);
         return true;
     }
     if !p.expect(T![=]) {
@@ -331,7 +331,7 @@ pub(crate) fn _returns_bool_classical_declaration_stmt(p: &mut Parser<'_>, m: Ma
         expressions::expr(p);
     }
     p.expect(T![;]);
-    m.complete(p, CLASSICAL_DECLARATION_STATEMENT);
+    m.complete(p, CLASSICAL_DECLARATION_STMT);
     true
 }
 
@@ -348,7 +348,7 @@ fn io_declaration_stmt(p: &mut Parser<'_>, m: Marker) {
     expressions::type_spec(p);
     expressions::var_name(p);
     p.expect(T![;]);
-    m.complete(p, I_O_DECLARATION_STATEMENT);
+    m.complete(p, I_O_DECLARATION_STMT);
 }
 
 /// Parse a subroutine defintion.
@@ -462,5 +462,5 @@ fn alias_stmt(p: &mut Parser<'_>, m: Marker) {
     p.expect(T![=]);
     expressions::expr(p);
     p.expect(SEMICOLON);
-    m.complete(p, ALIAS_DECLARATION_STATEMENT);
+    m.complete(p, ALIAS_DECLARATION_STMT);
 }

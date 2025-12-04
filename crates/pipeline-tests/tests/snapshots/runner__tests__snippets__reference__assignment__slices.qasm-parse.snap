@@ -22,7 +22,7 @@ a[0][0:1] = b[1][1:2:3];
 a[0:1][0] = b[0:1][0];
 a[0:1][0:1] = b[0:1][0:1];
 
-CLASSICAL_DECLARATION_STATEMENT@1..44: array[uint[16], 2, 2] a = {{1, 2}, {3, 4}};
+CLASSICAL_DECLARATION_STMT@1..44: array[uint[16], 2, 2] a = {{1, 2}, {3, 4}};
 ARRAY_TYPE@1..22: array[uint[16], 2, 2]
 SCALAR_TYPE@7..15: uint[16]
 DESIGNATOR@11..15: [16]
@@ -37,7 +37,7 @@ LITERAL@32..33: 2
 ARRAY_LITERAL@36..42: {3, 4}
 LITERAL@37..38: 3
 LITERAL@40..41: 4
-CLASSICAL_DECLARATION_STATEMENT@45..100: array[uint[16], 2, 4] b = {{1, 2, 3, 4}, {5, 6, 7, 8}};
+CLASSICAL_DECLARATION_STMT@45..100: array[uint[16], 2, 4] b = {{1, 2, 3, 4}, {5, 6, 7, 8}};
 ARRAY_TYPE@45..66: array[uint[16], 2, 4]
 SCALAR_TYPE@51..59: uint[16]
 DESIGNATOR@55..59: [16]

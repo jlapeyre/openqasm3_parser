@@ -54,7 +54,7 @@ BLOCK_EXPR@61..137: {
   if (result == 2) return 1 + result;
   return result;
 }
-CLASSICAL_DECLARATION_STATEMENT@65..80: int[10] result;
+CLASSICAL_DECLARATION_STMT@65..80: int[10] result;
 SCALAR_TYPE@65..72: int[10]
 DESIGNATOR@68..72: [10]
 LITERAL@69..71: 10
