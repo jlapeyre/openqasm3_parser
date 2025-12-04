@@ -1047,13 +1047,6 @@ fn binary_op_to_asg_type(synast_op: synast::BinaryOp) -> asg::BinaryOp {
                 BitXor => ArithOp(asg::ArithOp::BitXOr),
                 BitAnd => ArithOp(asg::ArithOp::BitAnd),
             }
-            // match arith_op {
-            //     Add => ArithOp(asg::ArithOp::Add),
-            //     Mul => ArithOp(asg::ArithOp::Mul),
-            //     Sub => ArithOp(asg::ArithOp::Sub),
-            //     Div => ArithOp(asg::ArithOp::Div),
-            //     Rem | Shl | Shr | BitOr | BitXor | BitAnd => panic!("Unsupported binary operator"),
-            // }
         }
         synast::BinaryOp::CmpOp(cmp_op) => {
             use asg::BinaryOp::CmpOp;
@@ -1062,7 +1055,7 @@ fn binary_op_to_asg_type(synast_op: synast::BinaryOp) -> asg::BinaryOp {
                 Eq { negated: false } => CmpOp(asg::CmpOp::Eq),
                 Eq { negated: true } => CmpOp(asg::CmpOp::Neq),
                 Ord { .. } => {
-                    panic!("Comparision operators other than `=` and `!=` are not supported.")
+                    panic!("Comparision operators other than `==` and `!=` are not supported.")
                 }
             }
         }
@@ -1329,81 +1322,77 @@ fn io_declaration_statement_to_asg_stmt(
     }
 }
 
-// FIXME: Refactor this. It was done in a hurry.
+
 fn assignment_stmt_to_asg_stmt(
     assignment_stmt: &synast::AssignmentStmt,
     context: &mut Context,
 ) -> Option<asg::Stmt> {
-    let nameb = assignment_stmt.identifier(); // LHS of assignment
-                                              // LHS is an identifier
-    if let Some(name) = &nameb {
-        let name_str = name.string();
-        let mut expr = expr_to_asg_texpr(assignment_stmt.rhs(), context).unwrap(); // rhs of `=` operator
+    let lhs = assignment_stmt.assignment_lhs().unwrap(); // LHS of assignment
 
-        let (symbol_id, symbol_type) = context.lookup_symbol(name_str.as_str(), name).as_tuple();
-        let symbol_ok = symbol_id.is_ok();
-        let is_mutating_const = symbol_ok && symbol_type.is_const();
-        let lvalue = asg::LValue::Identifier(symbol_id);
-        let expr_type = expr.get_type();
-        // Check that types match, but only if lhs has been declared, in which case
-        // recording a type error would be redundant.
-        if symbol_ok && expr_type != &symbol_type {
-            if expr_type.equal_up_to_dims(&symbol_type) {
-                context.insert_error(IncompatibleDimensionError, assignment_stmt);
-            } else if let asg::Expr::Literal(asg::Literal::Int(intlit)) = expr.expression() {
-                // Cast positive integer literal to UInt
-                if matches!(symbol_type, Type::UInt(..)) {
-                    if *intlit.sign() {
-                        // FIXME: We are casting to unsigned if the int literal is positive.
-                        // But we are not checking the width.
-                        expr = asg::Cast::new(expr, symbol_type).to_texpr()
+    match lhs {
+        synast::AssignmentLhs::Identifier(name) => {
+            let name_str = name.string();
+            let rhs = assignment_stmt.rhs();
+            let mut expr = expr_to_asg_texpr(rhs, context).unwrap();
+            let (symbol_id, symbol_type) =
+                context.lookup_symbol(name_str.as_str(), &name).as_tuple();
+            let symbol_ok = symbol_id.is_ok();
+            let is_mutating_const = symbol_ok && symbol_type.is_const();
+            let lvalue = asg::LValue::Identifier(symbol_id);
+            let expr_type = expr.get_type();
+            // Check that types match, but only if lhs has been declared, in which case
+            // recording a type error would be redundant.
+            if symbol_ok && expr_type != &symbol_type {
+                if expr_type.equal_up_to_dims(&symbol_type) {
+                    context.insert_error(IncompatibleDimensionError, assignment_stmt);
+                } else if let asg::Expr::Literal(asg::Literal::Int(intlit)) = expr.expression() {
+                    // Cast positive integer literal to UInt
+                    if matches!(symbol_type, Type::UInt(..)) {
+                        if *intlit.sign() {
+                            // FIXME: We are casting to unsigned if the int literal is positive.
+                            // But we are not checking the width.
+                            expr = asg::Cast::new(expr, symbol_type).to_texpr();
+                        } else {
+                            // We call this cast error. Not a great name
+                            // In Rust, `let x: u32 = -1;` gives "cannot apply unary operator `-` to type `u32`"
+                            // But we have combined `-` with the literal already during parsing (I think?).
+                            // In Julia, `x::UInt = -1` throws `InexactError`.
+                            context.insert_error(CastError, assignment_stmt);
+                        }
+                    }
+                } else {
+                    let promoted_type = types::promote_types(&symbol_type, expr_type);
+                    if promoted_type == symbol_type {
+                        expr = asg::Cast::new(expr, promoted_type).to_texpr()
                     } else {
-                        // We call this cast error. Not a great name
-                        // In Rust, `let x: u32 = -1;` gives "cannot apply unary operator `-` to type `u32`"
-                        // But we have combined `-` with the literal already during parsing (I think?).
-                        // In Julia, `x::UInt = -1` throws `InexactError`.
-                        context.insert_error(CastError, assignment_stmt);
+                        context.insert_error(IncompatibleTypesError, assignment_stmt);
                     }
                 }
-            } else {
-                let promoted_type = types::promote_types(&symbol_type, expr_type);
-                if promoted_type == symbol_type {
-                    expr = asg::Cast::new(expr, promoted_type).to_texpr()
-                } else {
-                    context.insert_error(IncompatibleTypesError, assignment_stmt);
+            }
+            let stmt_asg = Some(asg::Assignment::new(lvalue, expr).to_stmt());
+            if is_mutating_const {
+                context.insert_error(MutateConstError, assignment_stmt);
+            }
+            return stmt_asg;
+        }
+
+        synast::AssignmentLhs::IndexedIdentifier(indexed_identifier_ast) => {
+            // LHS is *not* an identifier, rather an indexed identifier
+            let (indexed_identifier, typ) =
+                indexed_identifier_to_asg_type(&indexed_identifier_ast, context);
+            // Examine number of indexing operators. Eg. `d[1][2]` has two operations.
+            // We only check expressions with a single indexing op for now.
+            if indexed_identifier.indexes().len() == 1 {
+                let index = &indexed_identifier.indexes()[0];
+                if index.num_dims() > typ.num_dims() {
+                    context.insert_error(TooManyIndexes, &indexed_identifier_ast);
                 }
             }
+            let expr = expr_to_asg_texpr(assignment_stmt.rhs(), context).unwrap(); // rhs of `=` operator
+            let lvalue = asg::LValue::IndexedIdentifier(indexed_identifier);
+            Some(asg::Assignment::new(lvalue, expr).to_stmt())
         }
-        let stmt_asg = Some(asg::Assignment::new(lvalue, expr).to_stmt());
-        if is_mutating_const {
-            context.insert_error(MutateConstError, assignment_stmt);
-        }
-        return stmt_asg;
     }
-    // LHS is *not* an identifier, rather an indexed identifier
-    let indexed_identifier_ast = assignment_stmt.indexed_identifier().unwrap();
-    let (indexed_identifier, typ) =
-        indexed_identifier_to_asg_type(&indexed_identifier_ast, context);
-    // Examine number of indexing operators. Eg. `d[1][2]` has two operations.
-    // We only check expressions with a single indexing op for now.
-    if indexed_identifier.indexes().len() == 1 {
-        let index = &indexed_identifier.indexes()[0];
-        if index.num_dims() > typ.num_dims() {
-            context.insert_error(TooManyIndexes, &indexed_identifier_ast);
-        }
-        // let mut num_out_dims = typ.num_dims();
-        // match index {
-        //     asg::IndexOperator::SetExpression(_) => { num_out_dims = 1;}
-        //     asg::IndexOperator::ExpressionList(elist) => {
-        //         for expr in &elist.expressions {
-        //             dbg!(expr);
-        //         }
-        //     }
-        // }
-    }
-    let expr = expr_to_asg_texpr(assignment_stmt.rhs(), context).unwrap(); // rhs of `=` operator
-    let lvalue = asg::LValue::IndexedIdentifier(indexed_identifier);
-    Some(asg::Assignment::new(lvalue, expr).to_stmt())
 }
 
 //

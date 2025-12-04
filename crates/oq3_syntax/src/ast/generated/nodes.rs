@@ -52,9 +52,8 @@ impl AnnotationStatement {}
 pub struct AssignmentStmt {
     pub(crate) syntax: SyntaxNode,
 }
-impl ast::HasName for AssignmentStmt {}
 impl AssignmentStmt {
-    pub fn indexed_identifier(&self) -> Option<IndexedIdentifier> {
+    pub fn assignment_lhs(&self) -> Option<AssignmentLhs> {
         support::child(&self.syntax)
     }
     pub fn eq_token(&self) -> Option<SyntaxToken> {
@@ -1251,6 +1250,11 @@ pub enum Modifier {
 pub enum IndexKind {
     SetExpression(SetExpression),
     ExpressionList(ExpressionList),
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum AssignmentLhs {
+    Identifier(Identifier),
+    IndexedIdentifier(IndexedIdentifier),
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct AnyHasArgList {
@@ -3024,6 +3028,35 @@ impl AstNode for IndexKind {
         }
     }
 }
+impl From<Identifier> for AssignmentLhs {
+    fn from(node: Identifier) -> AssignmentLhs {
+        AssignmentLhs::Identifier(node)
+    }
+}
+impl From<IndexedIdentifier> for AssignmentLhs {
+    fn from(node: IndexedIdentifier) -> AssignmentLhs {
+        AssignmentLhs::IndexedIdentifier(node)
+    }
+}
+impl AstNode for AssignmentLhs {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        matches!(kind, IDENTIFIER | INDEXED_IDENTIFIER)
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            IDENTIFIER => AssignmentLhs::Identifier(Identifier { syntax }),
+            INDEXED_IDENTIFIER => AssignmentLhs::IndexedIdentifier(IndexedIdentifier { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            AssignmentLhs::Identifier(it) => &it.syntax,
+            AssignmentLhs::IndexedIdentifier(it) => &it.syntax,
+        }
+    }
+}
 impl AnyHasArgList {
     #[inline]
     pub fn new<T: ast::HasArgList>(node: T) -> AnyHasArgList {
@@ -3056,7 +3089,6 @@ impl AstNode for AnyHasName {
         matches!(
             kind,
             ALIAS_DECLARATION_STATEMENT
-                | ASSIGNMENT_STMT
                 | CLASSICAL_DECLARATION_STATEMENT
                 | DEF
                 | DEF_CAL
@@ -3106,6 +3138,11 @@ impl std::fmt::Display for Modifier {
     }
 }
 impl std::fmt::Display for IndexKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for AssignmentLhs {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

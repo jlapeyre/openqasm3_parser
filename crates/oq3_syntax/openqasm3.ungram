@@ -454,5 +454,8 @@ OldStyleDeclarationStatement =
 QuantumDeclarationStatement =
    QubitType (Name | HardwareQubit) ';'
 
+AssignmentLhs =
+  (Identifier| IndexedIdentifier)
+
 AssignmentStmt =
-    (Name | IndexedIdentifier) '=' rhs:Expr ';'
+   AssignmentLhs '=' rhs:Expr ';'
