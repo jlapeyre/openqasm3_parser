@@ -1409,3 +1409,13 @@ fn test_from_string_block_no_trailing_semicolon2() {
 "##;
     assert!(only_syntax_errors(code));
 }
+
+#[test]
+fn test_equal_assign_precedence() {
+    let code = r##"
+int a = 1;
+bool b;
+b = a == 0;
+"##;
+    assert!(no_errors(code));
+}

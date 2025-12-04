@@ -1334,7 +1334,10 @@ impl BinaryExpr {
                 };
                 BinaryExpr::new(op, new_left, new_right).to_texpr(promoted_type)
             }
-            BinaryOp::CmpOp(_) | BinaryOp::ConcatenationOp | BinaryOp::PowerOp => {
+            BinaryOp::CmpOp(_) => {
+                BinaryExpr::new(op, left, right).to_texpr(Type::Bool(IsConst::False))
+            }
+            BinaryOp::ConcatenationOp | BinaryOp::PowerOp => {
                 BinaryExpr::new(op, left, right).to_texpr(Type::ToDo)
             }
         }

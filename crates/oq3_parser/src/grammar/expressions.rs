@@ -222,14 +222,15 @@ fn current_op(p: &Parser<'_>) -> (u8, SyntaxKind, Associativity) {
         T![>] if p.at(T![>=])  => (5,  T![>=],  Left),
         T![>]                  => (5,  T![>],   Left),
         T![=] if p.at(T![=>])  => NOT_AN_OP,
-        T![=] if p.at(T![==])  => (5,  T![==],  Left),
-        // r-a had 1 as the bp here. But this attempts to parse
+        T![=] if p.at(T![==])  => (6,  T![==],  Left),
+        // r-a had 1 as the bp for `T![=] => ...` . But this attempts to parse
         // `x + y = 3`; as `(x + y) = 3;` which is probably not what the user meant.
         // Putting 12 as the bp instead of 1 parses this as
         // `x + (y = 3)`. In OQ3, this is still illegal, but the user will get a more
         // informative error message. That an assignment statement is not allowed here.
         // This may have unintended consequences and we will need to replace the 12 with 1.
-        T![=]                  => (12,  T![=],   Right),
+        // Update: Changed bp for `T![=]` to 5, in order to parse `a = b == c`.
+        T![=]                  => (5,  T![=],   Right),
         T![<] if p.at(T![<=])  => (5,  T![<=],  Left),
         T![<] if p.at(T![<<=]) => (1,  T![<<=], Right),
         T![<] if p.at(T![<<])  => (9,  T![<<],  Left),
