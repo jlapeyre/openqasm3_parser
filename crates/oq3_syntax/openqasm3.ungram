@@ -332,6 +332,9 @@ NegCtrlModifier =
 GateCallExpr =
   Name ArgList? QubitList
 
+NopStmt =
+  'nop' QubitList ';'
+
 Modifier =
     InvModifier | PowModifier | CtrlModifier | NegCtrlModifier
 

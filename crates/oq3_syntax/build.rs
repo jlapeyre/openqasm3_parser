@@ -332,6 +332,7 @@ mod sourcegen {
             "pragma",
             "dim",
             "reset",
+            "nop",
             // Flow control
             "break",
             "case",
@@ -427,6 +428,7 @@ mod sourcegen {
             "CAST_EXPR",
             "GATE_CALL_EXPR",
             "G_PHASE_CALL_EXPR",
+            "NOP_STMT",
             "INDEX_EXPR",
             "MODIFIED_GATE_CALL_EXPR",
             // unary

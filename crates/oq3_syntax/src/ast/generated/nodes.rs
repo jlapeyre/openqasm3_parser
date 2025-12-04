@@ -1130,6 +1130,21 @@ impl NegCtrlModifier {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct NopStmt {
+    pub(crate) syntax: SyntaxNode,
+}
+impl NopStmt {
+    pub fn nop_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![nop])
+    }
+    pub fn qubit_list(&self) -> Option<QubitList> {
+        support::child(&self.syntax)
+    }
+    pub fn semicolon_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![;])
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ForIterable {
     pub(crate) syntax: SyntaxNode,
 }
@@ -2391,6 +2406,21 @@ impl AstNode for NegCtrlModifier {
         &self.syntax
     }
 }
+impl AstNode for NopStmt {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == NOP_STMT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for ForIterable {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == FOR_ITERABLE
@@ -3514,6 +3544,11 @@ impl std::fmt::Display for CtrlModifier {
     }
 }
 impl std::fmt::Display for NegCtrlModifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for NopStmt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
