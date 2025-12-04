@@ -323,10 +323,7 @@ fn stmt_to_asg_stmt(stmt: synast::Stmt, context: &mut Context) -> Option<asg::St
             let iterable = if let Some(set_expr) = iterable_ast.set_expr() {
                 asg::ForIterable::SetExpression(set_expr_to_asg_type(set_expr, context))
             } else if let Some(range_expr) = iterable_ast.range_expr() {
-                asg::ForIterable::RangeExpression(range_expr_to_asg_type(
-                    range_expr,
-                    context,
-                ))
+                asg::ForIterable::RangeExpression(range_expr_to_asg_type(range_expr, context))
             } else if let Some(expression) = iterable_ast.for_iterable_expr() {
                 asg::ForIterable::Expr(expr_to_asg_texpr(Some(expression), context).unwrap())
             } else {
@@ -843,10 +840,7 @@ fn expr_to_asg_texpr(
     }
 }
 
-fn set_expr_to_asg_type(
-    set_expr: synast::SetExpr,
-    context: &mut Context,
-) -> asg::SetExpression {
+fn set_expr_to_asg_type(set_expr: synast::SetExpr, context: &mut Context) -> asg::SetExpression {
     asg::SetExpression::new(expr_list_to_asg_texpr(
         set_expr.expr_list().unwrap(),
         context,
@@ -990,9 +984,9 @@ fn index_operator_to_asg_type(
             asg::IndexOperator::SetExpression(set_expr_to_asg_type(set_expr, context))
         }
 
-        synast::IndexKind::ExprList(expr_list) => asg::IndexOperator::ExpressionList(
-            expr_list_to_asg_type(expr_list, context),
-        ),
+        synast::IndexKind::ExprList(expr_list) => {
+            asg::IndexOperator::ExpressionList(expr_list_to_asg_type(expr_list, context))
+        }
     }
 }
 
@@ -1018,10 +1012,7 @@ fn qubit_list_to_asg_texpr(
 
 // Return a Vec of TExpr.  There is no reason to return an iterator, because if it were an
 // iterator, then at every call site this would be collected immediately.
-fn expr_list_to_asg_texpr(
-    expr_list: synast::ExprList,
-    context: &mut Context,
-) -> Vec<asg::TExpr> {
+fn expr_list_to_asg_texpr(expr_list: synast::ExprList, context: &mut Context) -> Vec<asg::TExpr> {
     expr_list
         .exprs()
         .filter_map(|x| expr_to_asg_texpr(Some(x), context))
@@ -1293,6 +1284,7 @@ fn declare_classical_helper(
     initializer: Option<asg::TExpr>,
     context: &mut Context,
 ) -> asg::Stmt {
+    dbg!(&symbol_id);
     if let Some(initializer) = &initializer {
         if initializer.get_type().is_const() {
             context.insert_const_value(symbol_id.clone().unwrap(), initializer.clone());
