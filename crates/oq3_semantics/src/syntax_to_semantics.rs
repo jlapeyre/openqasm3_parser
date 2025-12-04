@@ -1284,10 +1284,11 @@ fn declare_classical_helper(
     initializer: Option<asg::TExpr>,
     context: &mut Context,
 ) -> asg::Stmt {
-    dbg!(&symbol_id);
-    if let Some(initializer) = &initializer {
-        if initializer.get_type().is_const() {
-            context.insert_const_value(symbol_id.clone().unwrap(), initializer.clone());
+    if symbol_id.is_ok() {
+        if let Some(initializer) = &initializer {
+            if initializer.get_type().is_const() {
+                context.insert_const_value(symbol_id.clone().unwrap(), initializer.clone());
+            }
         }
     }
     asg::DeclareClassical::new(symbol_id, initializer).to_stmt()

@@ -54,8 +54,8 @@ impl Default for SymbolId {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum SymbolError {
-    MissingBinding,
-    AlreadyBound,
+    MissingBindingError,
+    RedeclareError,
 }
 
 pub type SymbolIdResult = Result<SymbolId, SymbolError>;
@@ -361,7 +361,7 @@ impl SymbolTable {
     pub fn new_binding(&mut self, name: &str, typ: &Type) -> Result<SymbolId, SymbolError> {
         // Can't create a binding if it already exists in the current scope.
         if self.current_scope_contains_name(name) {
-            return Err(SymbolError::AlreadyBound);
+            return Err(SymbolError::RedeclareError);
         }
         Ok(self.new_binding_no_check(name, typ))
     }
@@ -414,7 +414,7 @@ impl SymbolTable {
                 ));
             }
         }
-        Err(SymbolError::MissingBinding) // `name` not found in any scope.
+        Err(SymbolError::MissingBindingError) // `name` not found in any scope.
     }
 
     /// Try to lookup `name`. If a binding is found return the `SymbolId`, otherwise create a new binding

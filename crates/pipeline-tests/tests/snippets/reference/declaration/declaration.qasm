@@ -1,21 +1,21 @@
 // lex: ok
 // parse: ok
-// sema: panic
+// sema: ok
 
 // beware the tab character in dur4 = 8 ns below
   int[10] x;
   int[10] y;
-  uint[32] z = 0xFa_1F;
-  uint[32] z = 0XFa_1F;
-  uint[16] z = 0o12_34;
-  uint[16] z = 0b1001_1001;
-  uint[16] z = 0B1001_1001;
-  uint x;
+  uint[32] z1 = 0xFa_1F;
+  uint[32] z2 = 0XFa_1F;
+  uint[16] z3 = 0o12_34;
+  uint[16] z4 = 0b1001_1001;
+  uint[16] z5 = 0B1001_1001;
+  uint x2;
   qubit[6] q1;
   qubit q2;
   bit[4] b1="0100";
   bit[8] b2="1001_0100";
-  bit b2 = "1";
+  bit[1] b3 = "1";
   bool m=true;
   bool n=bool(b2);
   bool o=false;

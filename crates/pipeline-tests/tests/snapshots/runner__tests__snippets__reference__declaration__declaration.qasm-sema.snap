@@ -3,11 +3,58 @@ source: crates/pipeline-tests/tests/runner.rs
 expression: sema_snap
 ---
 id: tests/snippets/reference/declaration/declaration.qasm
-expect-sema: Panic
+expect-sema: Ok
 --- sema ---
-ok: false
-panicked: true
-panic: called `Result::unwrap()` on an `Err` value: AlreadyBound
+ok: true
+panicked: false
 errors: 0
 --- asg ---
-(no asg)
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(7)), initializer: None })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(8)), initializer: None })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(9)), initializer: Some(TExpr { expression: Cast(Cast { operand: TExpr { expression: Literal(Int(IntLiteral { value: 64031, sign: true })), ty: Int(Some(128), True) }, typ: UInt(Some(32), False) }), ty: UInt(Some(32), False) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(10)), initializer: Some(TExpr { expression: Cast(Cast { operand: TExpr { expression: Literal(Int(IntLiteral { value: 64031, sign: true })), ty: Int(Some(128), True) }, typ: UInt(Some(32), False) }), ty: UInt(Some(32), False) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(11)), initializer: Some(TExpr { expression: Cast(Cast { operand: TExpr { expression: Literal(Int(IntLiteral { value: 668, sign: true })), ty: Int(Some(128), True) }, typ: UInt(Some(16), False) }), ty: UInt(Some(16), False) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(12)), initializer: Some(TExpr { expression: Cast(Cast { operand: TExpr { expression: Literal(Int(IntLiteral { value: 153, sign: true })), ty: Int(Some(128), True) }, typ: UInt(Some(16), False) }), ty: UInt(Some(16), False) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(13)), initializer: Some(TExpr { expression: Cast(Cast { operand: TExpr { expression: Literal(Int(IntLiteral { value: 153, sign: true })), ty: Int(Some(128), True) }, typ: UInt(Some(16), False) }), ty: UInt(Some(16), False) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(14)), initializer: None })
+
+DeclareQuantum(DeclareQuantum { name: Ok(SymbolId(15)) })
+
+DeclareQuantum(DeclareQuantum { name: Ok(SymbolId(16)) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(17)), initializer: Some(TExpr { expression: Literal(BitString(BitStringLiteral { value: "0100" })), ty: BitArray(D1(4), True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(18)), initializer: Some(TExpr { expression: Literal(BitString(BitStringLiteral { value: "1001_0100" })), ty: BitArray(D1(8), True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(19)), initializer: Some(TExpr { expression: Literal(BitString(BitStringLiteral { value: "1" })), ty: BitArray(D1(1), True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(20)), initializer: Some(TExpr { expression: Literal(Bool(BoolLiteral { value: true })), ty: Bool(True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(21)), initializer: Some(TExpr { expression: Cast(Cast { operand: TExpr { expression: Identifier(Ok(SymbolId(18))), ty: BitArray(D1(8), False) }, typ: Bool(True) }), ty: Bool(True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(22)), initializer: Some(TExpr { expression: Literal(Bool(BoolLiteral { value: false })), ty: Bool(True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(23)), initializer: Some(TExpr { expression: Literal(Float(FloatLiteral { value: "5500" })), ty: Float(Some(64), True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(24)), initializer: Some(TExpr { expression: Cast(Cast { operand: TExpr { expression: Literal(Int(IntLiteral { value: 5, sign: true })), ty: Int(Some(128), True) }, typ: Float(Some(64), True) }), ty: Float(Some(64), True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(25)), initializer: Some(TExpr { expression: Cast(Cast { operand: TExpr { expression: Literal(Float(FloatLiteral { value: "100" })), ty: Float(Some(64), True) }, typ: Float(Some(32), False) }), ty: Float(Some(32), False) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(26)), initializer: Some(TExpr { expression: Literal(TimingIntLiteral(TimingIntLiteral { value: 1000, sign: true, time_unit: Cycle })), ty: Duration(True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(27)), initializer: Some(TExpr { expression: BinaryExpr(BinaryExpr { op: ArithOp(Add), left: TExpr { expression: Identifier(Ok(SymbolId(26))), ty: Duration(False) }, right: TExpr { expression: Cast(Cast { operand: TExpr { expression: Literal(TimingIntLiteral(TimingIntLiteral { value: 200, sign: true, time_unit: NanoSecond })), ty: Duration(True) }, typ: Duration(False) }), ty: Duration(False) } }), ty: Duration(False) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(28)), initializer: Some(TExpr { expression: Literal(TimingIntLiteral(TimingIntLiteral { value: 10, sign: true, time_unit: MilliSecond })), ty: Duration(True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(29)), initializer: Some(TExpr { expression: Literal(TimingIntLiteral(TimingIntLiteral { value: 8, sign: true, time_unit: MicroSecond })), ty: Duration(True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(30)), initializer: Some(TExpr { expression: Literal(TimingIntLiteral(TimingIntLiteral { value: 1, sign: true, time_unit: Second })), ty: Duration(True) }) })
+
+DeclareClassical(DeclareClassical { name: Ok(SymbolId(31)), initializer: None })
